@@ -1,8 +1,7 @@
 package uk.gov.hmcts.authorisation.generators;
 
-import com.google.common.base.Supplier;
-
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
 

@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=uk.gov.hmcts.authorisation.config.ServiceTokenGeneratorConfiguration,uk.gov.hmcts.authorisation.ServiceAuthorisationApi
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=uk.gov.hmcts.authorisation.config.ServiceTokenGeneratorConfiguration,\
+  uk.gov.hmcts.authorisation.ServiceAuthorisationApi

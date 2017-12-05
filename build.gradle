@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 group 'uk.gov.hmcts.reform'
-version '0.0.1'
+version '0.0.2'
 
 checkstyle {
     maxWarnings = 0
@@ -138,7 +138,7 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-feign')
     compile('com.netflix.feign:feign-jackson:8.18.0')
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
-
+    compile group:'com.warrenstrange', name: 'googleauth', version: '1.1.2'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
     testCompile group: 'com.marvinformatics.feign', name: 'feign-mock', version: '0.6'
