@@ -25,6 +25,6 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     public String generate() {
         final GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
         final String oneTimePassword = valueOf(googleAuthenticator.getTotpPassword(secret)).toString();
-        return serviceAuthorisationApi.serviceToken(this.microService, oneTimePassword);
+        return "bearer " + serviceAuthorisationApi.serviceToken(this.microService, oneTimePassword);
     }
 }
