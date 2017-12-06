@@ -1,4 +1,4 @@
-package uk.gov.hmcts.authorisation.generators;
+package uk.gov.hmcts.reform.authorisation.generators;
 
 import org.junit.Test;
 import org.mockito.Mockito;

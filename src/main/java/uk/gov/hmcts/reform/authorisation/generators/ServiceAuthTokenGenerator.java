@@ -1,7 +1,7 @@
-package uk.gov.hmcts.authorisation.generators;
+package uk.gov.hmcts.reform.authorisation.generators;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
-import uk.gov.hmcts.authorisation.ServiceAuthorisationApi;
+import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import static java.lang.String.format;
 

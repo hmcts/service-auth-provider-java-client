@@ -1,4 +1,4 @@
-package uk.gov.hmcts.authorisation;
+package uk.gov.hmcts.reform.authorisation;
 
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
