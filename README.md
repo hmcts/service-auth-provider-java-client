@@ -1,7 +1,7 @@
 # service-auth-provider-java-client
 
-This is the backend service for Civil Money Claims.
-The service provides a methods to generate s2s auth token for a microservice and caches it for 4 hours.
+This is the client library for the service-auth-provider api micro service.
+The service provides a methods to generate s2s auth token for a micro service and caches it for 4 hours.
 
 
 ## Getting started
@@ -25,8 +25,7 @@ To build project please execute the following command:
 
 To use the services provided by this clients, they need to be instantiated in spring Configuration class
 ```java
-
-@Configuration
+   @Configuration
    @Lazy
    @EnableFeignClients(basePackageClasses = ServiceAuthorisationApi.class)
    public class ServiceTokenGeneratorConfiguration {
@@ -47,7 +46,6 @@ To use the services provided by this clients, they need to be instantiated in sp
            return new CachedServiceAuthTokenGenerator(serviceAuthTokenGenerator, ttl);
        }
    }
-    
 ``` 
 
 ## Developing
