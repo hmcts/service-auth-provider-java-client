@@ -27,7 +27,6 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
      *
      * @return Service Auth token for the micro service
      */
-
     @Override
     public String generate() {
         final String oneTimePassword = format("%06d", googleAuthenticator.getTotpPassword(secret));
