@@ -14,8 +14,6 @@ version '0.0.1'
 checkstyle {
     maxWarnings = 0
     toolVersion = '8.3'
-    // need to set configDir to rootDir otherwise submodule will use submodule/config/checkstyle
-//    configDir = new File(rootDir, 'config/checkstyle')
 }
 
 sourceCompatibility = 1.8
@@ -85,13 +83,13 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             groupId project.group
-            artifactId 'service-auth-provider-java-client'
+            artifactId 'service-auth-provider-client'
             version project.version
 
             pom.withXml {
                 def root = asNode()
-                root.appendNode('description', 'Client library for communicating with idam service authorisation access')
-                root.appendNode('name', 'Service authorisation access client')
+                root.appendNode('description', 'idam service auth provider api')
+                root.appendNode('name', 'Service auth provider api client')
                 root.appendNode('url', 'https://github.com/hmcts/service-auth-provider-java-client')
                 root.children().last() + pomConfig
             }
@@ -106,7 +104,7 @@ bintray {
     publish = true
     pkg {
         repo = 'hmcts-maven'
-        name = 'service-auth-provider-java-client'
+        name = 'service-auth-provider-client'
         userOrg = 'hmcts'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/hmcts/service-auth-provider-java-client'

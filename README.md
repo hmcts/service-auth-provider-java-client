@@ -1,6 +1,6 @@
 # service-auth-provider-java-client
 
-This is the backend service for Civil Money Claims.
+This is the Service auth provider client for Civil Money Claims.
 The service provides a methods to generate s2s auth token for a microservice and caches it for 4 hours.
 
 
