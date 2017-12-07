@@ -11,7 +11,7 @@ public class CachedServiceAuthTokenGeneratorTest {
     private final AuthTokenGenerator delegate = Mockito.mock(AuthTokenGenerator.class);
 
     @Test
-    public void shouldReuserOldTokenIfTimeHasNotExpired() {
+    public void shouldReuseOldTokenIfTimeHasNotExpired() {
         CachedServiceAuthTokenGenerator generator = new CachedServiceAuthTokenGenerator(delegate, 900);
         generator.generate();
         generator.generate();
