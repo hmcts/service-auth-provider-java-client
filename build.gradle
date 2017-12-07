@@ -7,17 +7,14 @@ buildscript {
     }
 }
 plugins {
-    id 'checkstyle'
+    id 'checkstyle' apply true
     id 'io.spring.dependency-management' version '1.0.3.RELEASE'
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id 'org.springframework.boot' version '1.5.9.RELEASE' apply true
+    id 'com.jfrog.bintray' version '1.8.0' apply true
+    id 'java-library' apply true
+    id 'maven' apply true
+    id 'maven-publish' apply true
 }
-
-apply plugin: 'checkstyle'
-apply plugin: 'java-library'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 
 group 'uk.gov.hmcts.reform'
 version '0.0.2'
