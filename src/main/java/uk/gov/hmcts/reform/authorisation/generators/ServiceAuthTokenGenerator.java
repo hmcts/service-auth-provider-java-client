@@ -5,6 +5,7 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import static java.lang.String.format;
 
+@SuppressWarnings("SummaryJavadoc")
 public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
 
     private final String secret;
