@@ -1,11 +1,3 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
-    }
-}
 plugins {
     id 'checkstyle' apply true
     id 'io.spring.dependency-management' version '1.0.3.RELEASE'
@@ -125,7 +117,7 @@ bintray {
 }
 
 ext {
-    springCloudVersion = 'Dalston.SR4'
+    springCloudVersion = 'Edgware.RELEASE'
 }
 
 dependencies {
