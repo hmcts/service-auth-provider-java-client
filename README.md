@@ -1,7 +1,7 @@
 # service-auth-provider-java-client
 
-This is the Service auth provider client for Civil Money Claims.
-The service provides a methods to generate s2s auth token for a microservice and caches it for 4 hours.
+This is the client library for the service-auth-provider api micro service.
+The service provides a methods to generate s2s auth token for a micro service and caches it for 4 hours.
 
 
 ## Getting started
