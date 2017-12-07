@@ -58,7 +58,7 @@ def pomConfig = {
     }
 
     scm {
-        url "https://github.com/hmcts/service-authorisation-access-client"
+        url "https://github.com/hmcts/service-auth-provider-java-client"
     }
 }
 
@@ -85,14 +85,14 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             groupId project.group
-            artifactId 'service-authorisation-access-client'
+            artifactId 'service-auth-provider-java-client'
             version project.version
 
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'Client library for communicating with idam service authorisation access')
                 root.appendNode('name', 'Service authorisation access client')
-                root.appendNode('url', 'https://github.com/hmcts/service-authorisation-access-client')
+                root.appendNode('url', 'https://github.com/hmcts/service-auth-provider-java-client')
                 root.children().last() + pomConfig
             }
         }
@@ -106,10 +106,10 @@ bintray {
     publish = true
     pkg {
         repo = 'hmcts-maven'
-        name = 'service-authorisation-access-client'
+        name = 'service-auth-provider-java-client'
         userOrg = 'hmcts'
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/hmcts/service-authorisation-access-client'
+        vcsUrl = 'https://github.com/hmcts/service-auth-provider-java-client'
         version {
             name = project.version
         }

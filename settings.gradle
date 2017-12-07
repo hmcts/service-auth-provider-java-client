@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'service-authorisation-access-client'
+rootProject.name = 'service-auth-provider-java-client'

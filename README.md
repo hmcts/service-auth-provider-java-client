@@ -1,1 +1,1 @@
-# service-authorisation-access-client
+# service-auth-provider-java-client
