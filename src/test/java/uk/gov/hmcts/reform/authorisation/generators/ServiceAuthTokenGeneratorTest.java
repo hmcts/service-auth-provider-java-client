@@ -13,7 +13,7 @@ public class ServiceAuthTokenGeneratorTest {
     private final ServiceAuthorisationApi serviceAuthorisationApi = Mockito.mock(ServiceAuthorisationApi.class);
 
     @Test
-    public void shouldGenerateServiceAuthToken() throws Exception {
+    public void shouldGenerateServiceAuthToken() {
         //given
         final String secret = "123456";
         final String microService = "microservice";
