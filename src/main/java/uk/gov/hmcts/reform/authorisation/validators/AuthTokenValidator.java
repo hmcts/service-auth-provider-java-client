@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.authorisation.validators;
 
+import java.util.List;
+
 interface AuthTokenValidator {
 
     String BEARER = "Bearer ";
@@ -15,5 +17,5 @@ interface AuthTokenValidator {
      * @param token Bearer token
      * @param roles Roles
      */
-    void validate(String token, String[] roles);
+    void validate(String token, List<String> roles);
 }
