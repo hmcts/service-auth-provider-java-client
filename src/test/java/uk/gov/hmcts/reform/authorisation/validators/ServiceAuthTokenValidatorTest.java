@@ -31,9 +31,8 @@ public class ServiceAuthTokenValidatorTest {
         final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
         validator.validate(serviceAuthToken);
-        validator.validate(serviceAuthToken);
 
-        verify(api, times(2)).authorise(serviceAuthToken, new String[0]);
+        verify(api, times(1)).authorise(serviceAuthToken, new String[0]);
     }
 
     @Test
