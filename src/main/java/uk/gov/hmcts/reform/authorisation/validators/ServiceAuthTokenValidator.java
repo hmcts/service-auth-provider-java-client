@@ -23,10 +23,6 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
     @Override
     public void validate(String token, final List<String> roles) {
         try {
-            if (!token.startsWith(BEARER)) {
-                token = BEARER + token;
-            }
-
             api.authorise(token, roles.toArray(new String[roles.size()]));
         } catch (FeignException exception) {
             boolean isClientError = exception.status() >= 400 && exception.status() <= 499;

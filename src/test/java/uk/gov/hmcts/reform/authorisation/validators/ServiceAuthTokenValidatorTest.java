@@ -17,7 +17,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator.BEARER;
 
 public class ServiceAuthTokenValidatorTest {
     private final ServiceAuthorisationApi api = mock(ServiceAuthorisationApi.class);
@@ -31,9 +30,9 @@ public class ServiceAuthTokenValidatorTest {
         final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
         validator.validate(serviceAuthToken);
-        validator.validate(BEARER + serviceAuthToken);
+        validator.validate(serviceAuthToken);
 
-        verify(api, times(2)).authorise(BEARER + serviceAuthToken, new String[0]);
+        verify(api, times(2)).authorise(serviceAuthToken, new String[0]);
     }
 
     @Test

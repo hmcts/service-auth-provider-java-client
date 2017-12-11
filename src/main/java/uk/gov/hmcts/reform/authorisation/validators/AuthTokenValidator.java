@@ -4,8 +4,6 @@ import java.util.List;
 
 interface AuthTokenValidator {
 
-    String BEARER = "Bearer ";
-
     /**
      * Validate bearer token.
      * @param token Bearer token
