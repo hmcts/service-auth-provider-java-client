@@ -13,7 +13,7 @@ version '0.0.4'
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '8.3'
+    toolVersion = '8.5'
 }
 
 sourceCompatibility = 1.8
