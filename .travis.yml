@@ -12,7 +12,7 @@ env:
   - secure: Cz84smuIbnOJhigQhL2wx/6RxgIIOBn1hfO0wBqGmCC8C31u7J6zTgMAXV/4vTR3wYpUM91H4CNsmOj167uf5suLZYNYIIYuvH0rYmbzYHRQ/jYDNPfH07VPHo+deyjVZ99DPRXZdef/d7xDa9Tz7GcVX52uVh1XmhKN4YwkFBeTLIzBTGonnls8fxu8t/Y+tD0j5RK85zZvIHg90u0vziVi6eRBmrrZ2v1l0Ec342Kc4sGa6zwbWTzKV9hjmIy3oNVLrKytOD17A6nw/0cwWMtmGgDmWKfxpiEceDmHahcebV5XI4i9q7Oa0384XRMVo5tosJW/76qC0oxXJWynmmyMQ6rkInB9/gf6ehkZ/PxLP6bG5M1gcO46q73Y4AX0LmZU8f+UGRXZKw6nQg3DJnXfDMc5IxNIKsS7Xc+EUbtBWt2iOwhw0AN6DXj1A0hicHO4Ig9teKH04tsiwy2KnjMgXIyZrQpaIMFkaFbKsupglvFsD2RnPeIw40KAcAkkFtTpr/jtPUj+ddb79LLoytPL/TH3gqmgPbng91V63TwXUQgnVjcc5tJuUzanIao1Y1jzYe8dqQ41kYe/NLAI17uCj2SO4ZuIo5RPGUv7Zs3LBeyHCmmAMDWwvm1SW6naRJzt5HvAwIDESqeElDqf/Hb2N7TT56XNFN09x2qTSKo=
 deploy:
 - provider: script
-  script: ./gradlew bintrayUpload
+  script: ./gradlew bintrayUpload --info
   skip_cleanup: true
   on:
     tags: true
