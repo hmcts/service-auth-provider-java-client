@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.authorisation.validators;
 
 import feign.FeignException;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
-import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
+import uk.gov.hmcts.reform.authorisation.exceptions.AbstractAuthorisationException;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,9 +25,7 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
         try {
             api.authorise(token, roles.toArray(new String[roles.size()]));
         } catch (FeignException exception) {
-            boolean isClientError = exception.status() >= 400 && exception.status() <= 499;
-
-            throw isClientError ? new InvalidTokenException(exception.getMessage(), exception) : exception;
+            throw AbstractAuthorisationException.parseFeignException(exception);
         }
     }
 }

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.reform.authorisation.exceptions;
 
-public class InvalidTokenException extends RuntimeException {
+public class InvalidTokenException extends AbstractAuthorisationException {
 
-    public InvalidTokenException(String message, Throwable cause) {
+    InvalidTokenException(String message, Throwable cause) {
         super(message, cause);
     }
 }

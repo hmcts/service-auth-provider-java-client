@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
+import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
 
 import java.util.Collections;
 
@@ -43,8 +44,8 @@ public class ServiceAuthTokenValidatorTest {
     }
 
     @Test
-    public void shouldThrowFeignException() {
-        exception.expect(FeignException.class);
+    public void shouldThrowServiceException() {
+        exception.expect(ServiceException.class);
 
         throwFeignException(HttpStatus.SERVICE_UNAVAILABLE);
     }
