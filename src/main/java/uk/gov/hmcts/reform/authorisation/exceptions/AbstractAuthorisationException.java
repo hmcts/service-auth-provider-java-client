@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.authorisation.exceptions;
 
 import feign.FeignException;
 
-abstract public class AbstractAuthorisationException extends RuntimeException {
+public abstract class AbstractAuthorisationException extends RuntimeException {
 
     AbstractAuthorisationException(String message, Throwable cause) {
         super(message, cause);
