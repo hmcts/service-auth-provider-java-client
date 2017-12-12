@@ -2,14 +2,21 @@ package uk.gov.hmcts.reform.authorisation;
 
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @EnableFeignClients
 @FeignClient(name = "idam-s2s-auth", url = "${idam.s2s-auth.url}")
 public interface ServiceAuthorisationApi {
-    @RequestMapping(method = RequestMethod.POST, value = "/lease")
+    @PostMapping(value = "/lease")
     String serviceToken(@RequestParam("microservice") final String microservice,
                         @RequestParam("oneTimePassword") final String oneTimePassword);
+
+    @GetMapping(value = "/authorisation-check")
+    void authorise(@RequestHeader(AUTHORIZATION) final String authHeader,
+                   @RequestParam("role") final String[] roles);
 }
