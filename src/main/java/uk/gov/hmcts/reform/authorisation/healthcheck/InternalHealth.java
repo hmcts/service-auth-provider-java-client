@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.actuate.health.Status;
 
-import java.util.Map;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InternalHealth {
     private final Status status;
