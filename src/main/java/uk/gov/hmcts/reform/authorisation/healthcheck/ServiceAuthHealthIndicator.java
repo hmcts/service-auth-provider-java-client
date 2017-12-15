@@ -7,23 +7,24 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
+import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationHealthApi;
 
 @Component
 public class ServiceAuthHealthIndicator implements HealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAuthHealthIndicator.class);
 
-    private final ServiceAuthorisationApi serviceAuthorisationApi;
+    private final ServiceAuthorisationHealthApi serviceAuthorisationHealthApi;
 
     @Autowired
-    public ServiceAuthHealthIndicator(final ServiceAuthorisationApi serviceAuthorisationApi) {
-        this.serviceAuthorisationApi = serviceAuthorisationApi;
+    public ServiceAuthHealthIndicator(final ServiceAuthorisationHealthApi serviceAuthorisationHealthApi) {
+        this.serviceAuthorisationHealthApi = serviceAuthorisationHealthApi;
     }
 
     @Override
     public Health health() {
         try {
-            InternalHealth internalHealth = this.serviceAuthorisationApi.health();
+            InternalHealth internalHealth = this.serviceAuthorisationHealthApi.health();
             return new Health.Builder(internalHealth.getStatus()).build();
         } catch (Exception ex) {
             LOGGER.error("Error on service auth healthcheck", ex);

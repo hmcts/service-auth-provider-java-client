@@ -18,13 +18,24 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
-@FeignClient(name = "idam-s2s-auth", url = "${idam.s2s-auth.url}")
-public interface ServiceAuthorisationApi {
-    @PostMapping(value = "/lease")
-    String serviceToken(@RequestParam("microservice") final String microservice,
-                        @RequestParam("oneTimePassword") final String oneTimePassword);
+@FeignClient(name = "idam-s2s-auth-health", url = "${idam.s2s-auth.url}",
+        configuration = ServiceAuthorisationHealthApi.ServiceAuthConfiguration.class)
+public interface ServiceAuthorisationHealthApi {
 
-    @GetMapping(value = "/authorisation-check")
-    void authorise(@RequestHeader(AUTHORIZATION) final String authHeader,
-                   @RequestParam("role") final String[] roles);
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/health",
+            headers = CONTENT_TYPE + "=" + APPLICATION_JSON_UTF8_VALUE
+    )
+    InternalHealth health();
+
+
+    class ServiceAuthConfiguration {
+        @Bean
+        @Primary
+        @Scope("prototype")
+        Decoder feignDecoder() {
+            return new JacksonDecoder();
+        }
+    }
 }
