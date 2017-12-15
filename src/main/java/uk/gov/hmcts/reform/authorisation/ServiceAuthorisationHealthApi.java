@@ -24,7 +24,6 @@ public interface ServiceAuthorisationHealthApi {
     )
     InternalHealth health();
 
-
     class ServiceAuthConfiguration {
         @Bean
         @Primary
