@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  uk.gov.hmcts.reform.authorisation.healthcheck.ServiceAuthHealthIndicator
