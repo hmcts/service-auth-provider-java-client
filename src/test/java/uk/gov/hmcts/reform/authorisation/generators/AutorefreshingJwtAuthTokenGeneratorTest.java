@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.hmcts.reform.authorisation.exceptions.JWTDecodingException;
+import uk.gov.hmcts.reform.authorisation.exceptions.JwtDecodingException;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -77,7 +77,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_throw_an_exception_if_s2s_token_is_not_a_JWT_token() {
+    public void should_throw_an_exception_if_s2s_token_is_not_a_jwt_token() {
         // given
         given(generator.generate())
             .willReturn("clearly not a valid JWT token");
@@ -88,7 +88,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
         // then
         assertThat(exc)
             .isNotNull()
-            .isInstanceOf(JWTDecodingException.class);
+            .isInstanceOf(JwtDecodingException.class);
     }
 
     @Test

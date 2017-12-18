@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.authorisation.generators;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import uk.gov.hmcts.reform.authorisation.exceptions.JWTDecodingException;
+import uk.gov.hmcts.reform.authorisation.exceptions.JwtDecodingException;
 
 import java.time.Duration;
 import java.util.Date;
@@ -43,7 +43,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
             try {
                 this.jwt = JWT.decode(newToken);
             } catch (JWTDecodeException exc) {
-                throw new JWTDecodingException(exc.getMessage(), exc);
+                throw new JwtDecodingException(exc.getMessage(), exc);
             }
         }
 
