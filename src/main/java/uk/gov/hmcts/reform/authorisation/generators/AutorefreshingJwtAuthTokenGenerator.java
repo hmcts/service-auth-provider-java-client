@@ -37,11 +37,11 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
 
     @Override
     public String generate() {
-        if (this.jwt == null || needToRefresh(jwt.getExpiresAt())) {
+        if (jwt == null || needToRefresh(jwt.getExpiresAt())) {
             String newToken = generator.generate();
 
             try {
-                this.jwt = JWT.decode(newToken);
+                jwt = JWT.decode(newToken);
             } catch (JWTDecodeException exc) {
                 throw new JwtDecodingException(exc.getMessage(), exc);
             }
