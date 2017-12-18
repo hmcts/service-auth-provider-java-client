@@ -30,7 +30,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
             try {
                 this.jwt = JWT.decode(newToken);
             } catch (JWTDecodeException exc) {
-                throw new JWTDecodingException(exc.getMessage(), exc.getCause());
+                throw new JWTDecodingException(exc.getMessage(), exc);
             }
         }
 
