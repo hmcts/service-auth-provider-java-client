@@ -8,12 +8,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.authorisation.exceptions.JWTDecodingException;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
 import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -62,7 +64,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_request_new_token_once_it_expires() throws Exception{
+    public void should_request_new_token_once_it_expires() throws Exception {
         // given
         given(generator.generate())
             .willReturn(jwtTokenWithExpDate(now().minus(2, HOURS)));
@@ -87,6 +89,27 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
         assertThat(exc)
             .isNotNull()
             .isInstanceOf(JWTDecodingException.class);
+    }
+
+    @Test
+    public void should_request_a_new_token_if_delta_is_larger_than_time_left_to_expiry_date() throws Exception {
+        // given
+        // retrieved token is valid for one more minute
+        given(generator.generate())
+            .willReturn(jwtTokenWithExpDate(now().plus(1, MINUTES)));
+
+        // but we want to refresh 2 minutes before it expires
+        AutorefreshingJwtAuthTokenGenerator jwtGenerator = new AutorefreshingJwtAuthTokenGenerator(
+            generator,
+            Duration.of(2, MINUTES)
+        );
+
+        // when
+        repeat(2, () -> jwtGenerator.generate());
+
+        // then
+        // it should request a new token
+        verify(generator, times(2)).generate();
     }
 
     private String jwtTokenWithExpDate(Instant expAtDate) throws Exception {

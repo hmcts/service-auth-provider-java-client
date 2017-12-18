@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import uk.gov.hmcts.reform.authorisation.exceptions.JWTDecodingException;
 
+import java.time.Duration;
 import java.util.Date;
 
 import static java.time.Instant.now;
@@ -15,11 +16,23 @@ import static java.time.Instant.now;
 public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
 
     private final ServiceAuthTokenGenerator generator;
+    private final Duration refreshTimeDelta;
 
     private DecodedJWT jwt = null;
 
-    public AutorefreshingJwtAuthTokenGenerator(ServiceAuthTokenGenerator generator) {
+    /**
+     * @param refreshTimeDelta time before actual expiry date in JWT when a new token should be requested.
+     */
+    public AutorefreshingJwtAuthTokenGenerator(
+        ServiceAuthTokenGenerator generator,
+        Duration refreshTimeDelta
+    ) {
         this.generator = generator;
+        this.refreshTimeDelta = refreshTimeDelta;
+    }
+
+    public AutorefreshingJwtAuthTokenGenerator(ServiceAuthTokenGenerator generator) {
+        this(generator, Duration.ZERO);
     }
 
     @Override
@@ -38,6 +51,6 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
     }
 
     private boolean needToRefresh(Date expDate) {
-        return expDate != null && Date.from(now()).after(expDate);
+        return expDate != null && Date.from(now().plus(refreshTimeDelta)).after(expDate);
     }
 }
