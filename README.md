@@ -45,6 +45,16 @@ To use the services provided by this clients, they need to be instantiated in sp
                @Value("${idam.s2s-auth.tokenTimeToLiveInSeconds:14400}") final int ttl) {
            return new CachedServiceAuthTokenGenerator(serviceAuthTokenGenerator, ttl);
        }
+
+       @Bean
+       public AuthTokenGenerator autorefreshingJwtAuthTokenGenerator(
+               @Qualifier("serviceAuthTokenGenerator") final AuthTokenGenerator serviceAuthTokenGenerator,
+               @Value("${idam.s2s-auth.refreshTimeDeltaInSeconds}") final int refreshDeltaInSeconds) {
+           return new AutorefreshingJwtAuthTokenGenerator(
+               serviceAuthTokenGenerator,
+               Duration.of(refreshDeltaInSeconds, SECONDS)
+           );
+       }
    }
 ``` 
 
