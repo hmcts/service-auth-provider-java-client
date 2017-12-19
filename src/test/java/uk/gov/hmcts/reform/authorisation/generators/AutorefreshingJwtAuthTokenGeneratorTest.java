@@ -36,7 +36,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_request_new_token_on_first_usage() throws Exception {
+    public void should_request_new_token_on_from_passed_generator_on_first_usage() throws Exception {
         // given
         String tokenFromS2S = jwtTokenWithExpDate(now());
 
