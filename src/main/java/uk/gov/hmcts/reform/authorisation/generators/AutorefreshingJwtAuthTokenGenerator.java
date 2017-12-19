@@ -21,6 +21,8 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
     private DecodedJWT jwt = null;
 
     /**
+     * Constructor.
+     *
      * @param refreshTimeDelta time before actual expiry date in JWT when a new token should be requested.
      */
     public AutorefreshingJwtAuthTokenGenerator(
