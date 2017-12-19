@@ -135,7 +135,7 @@ dependencyManagement {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
     dependencies {
-        dependency group: 'com.google.guava', name: 'guava', version: '23.0'
+        dependency group: 'com.google.guava', name: 'guava', version: '23.2-jre'
     }
 }
 
