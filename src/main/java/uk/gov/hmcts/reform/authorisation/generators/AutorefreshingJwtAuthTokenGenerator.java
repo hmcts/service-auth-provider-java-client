@@ -15,7 +15,7 @@ import static java.time.Instant.now;
  */
 public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
 
-    private final ServiceAuthTokenGenerator generator;
+    private final AuthTokenGenerator generator;
     private final Duration refreshTimeDelta;
 
     private DecodedJWT jwt = null;
@@ -27,14 +27,14 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
      * @param refreshTimeDelta Time before actual expiry date in JWT when a new token should be requested.
      */
     public AutorefreshingJwtAuthTokenGenerator(
-        ServiceAuthTokenGenerator generator,
+        AuthTokenGenerator generator,
         Duration refreshTimeDelta
     ) {
         this.generator = generator;
         this.refreshTimeDelta = refreshTimeDelta;
     }
 
-    public AutorefreshingJwtAuthTokenGenerator(ServiceAuthTokenGenerator generator) {
+    public AutorefreshingJwtAuthTokenGenerator(AuthTokenGenerator generator) {
         this(generator, Duration.ZERO);
     }
 
