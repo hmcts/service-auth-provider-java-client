@@ -17,7 +17,7 @@ public class BearerTokenGenerator implements AuthTokenGenerator {
     @Override
     public String generate() {
         String token = decorated.generate();
-        if (token.matches("Bearer .+")) {
+        if (token.matches("^Bearer .+")) {
             return token;
         } else {
             return "Bearer " + token;
