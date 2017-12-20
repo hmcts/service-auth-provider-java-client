@@ -17,4 +17,7 @@ public interface ServiceAuthorisationApi {
     @GetMapping(value = "/authorisation-check")
     void authorise(@RequestHeader(AUTHORIZATION) final String authHeader,
                    @RequestParam("role") final String[] roles);
+
+    @GetMapping(value = "/details")
+    String getServiceName(@RequestHeader(AUTHORIZATION) final String authHeader);
 }

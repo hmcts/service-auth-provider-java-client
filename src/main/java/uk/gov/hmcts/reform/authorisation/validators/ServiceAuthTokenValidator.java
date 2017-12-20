@@ -28,4 +28,13 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
             throw AbstractAuthorisationException.parseFeignException(exception);
         }
     }
+
+    @Override
+    public String getServiceName(final String token) {
+        try {
+            return api.getServiceName(token);
+        } catch (FeignException exception) {
+            throw AbstractAuthorisationException.parseFeignException(exception);
+        }
+    }
 }
