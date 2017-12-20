@@ -16,4 +16,11 @@ interface AuthTokenValidator {
      * @param roles Roles
      */
     void validate(String token, List<String> roles);
+
+    /**
+     * Validate bearer token and return service name from it.
+     * @param token Bearer token
+     * @return Service name
+     */
+    String getServiceName(final String token);
 }

@@ -9,14 +9,21 @@ import static org.mockito.Mockito.verify;
 
 public class ServiceAuthTokenValidatorTest {
 
+    private final ServiceAuthorisationApi api = mock(ServiceAuthorisationApi.class);
+    private final AuthTokenValidator validator = new ServiceAuthTokenValidator(api);
+    private static final String SERVICE_AUTH_TOKEN = "service-auth-token";
+
     @Test
     public void shouldValidateServiceAuthToken() {
-        final String serviceAuthToken = "service-auth-token";
-        final ServiceAuthorisationApi api = mock(ServiceAuthorisationApi.class);
-        final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
+        validator.validate(SERVICE_AUTH_TOKEN);
 
-        validator.validate(serviceAuthToken);
+        verify(api, times(1)).authorise(SERVICE_AUTH_TOKEN, new String[0]);
+    }
 
-        verify(api, times(1)).authorise(serviceAuthToken, new String[0]);
+    @Test
+    public void shouldRetrieveServiceNameFromS2S() {
+        validator.getServiceName(SERVICE_AUTH_TOKEN);
+
+        verify(api, times(1)).getServiceName(SERVICE_AUTH_TOKEN);
     }
 }
