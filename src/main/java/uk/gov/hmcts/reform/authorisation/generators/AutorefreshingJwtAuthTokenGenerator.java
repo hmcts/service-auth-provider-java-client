@@ -23,7 +23,8 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
     /**
      * Constructor.
      *
-     * @param refreshTimeDelta time before actual expiry date in JWT when a new token should be requested.
+     * @param generator Token generator for automatic refresh
+     * @param refreshTimeDelta Time before actual expiry date in JWT when a new token should be requested.
      */
     public AutorefreshingJwtAuthTokenGenerator(
         ServiceAuthTokenGenerator generator,
