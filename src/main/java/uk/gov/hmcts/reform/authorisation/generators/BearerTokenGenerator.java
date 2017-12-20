@@ -8,15 +8,15 @@ import static java.util.Objects.requireNonNull;
  */
 public class BearerTokenGenerator implements AuthTokenGenerator {
 
-    private AuthTokenGenerator decoreated;
+    private AuthTokenGenerator decorated;
 
     public BearerTokenGenerator(AuthTokenGenerator decorated) {
-        this.decoreated = requireNonNull(decorated);
+        this.decorated = requireNonNull(decorated);
     }
 
     @Override
     public String generate() {
-        String token = decoreated.generate();
+        String token = decorated.generate();
         if (token.matches("Bearer .+")) {
             return token;
         } else {
