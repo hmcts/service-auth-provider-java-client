@@ -37,26 +37,11 @@ To use the services provided by this clients, they need to be instantiated in sp
                @Value("${idam.s2s-auth.microservice}") final String microService,
                final ServiceAuthorisationApi serviceAuthorisationApi
        ) {
-           return new ServiceAuthTokenGenerator(secret, microService, serviceAuthorisationApi);
+           return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
        }
 
-       @Bean
-       public AuthTokenGenerator autorefreshingJwtAuthTokenGenerator(
-               @Qualifier("serviceAuthTokenGenerator") final AuthTokenGenerator serviceAuthTokenGenerator,
-               @Value("${idam.s2s-auth.refreshTimeDeltaInSeconds}") final int refreshDeltaInSeconds) {
-           return new AutorefreshingJwtAuthTokenGenerator(
-               serviceAuthTokenGenerator,
-               Duration.of(refreshDeltaInSeconds, SECONDS)
-           );
-       }
    }
 ``` 
-
-There is a factory that creates a default implementation which provides JWT auto refreshing and bearer wrapping features:
-
-```java
-    return authTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
-```
 
 ## Developing
 
