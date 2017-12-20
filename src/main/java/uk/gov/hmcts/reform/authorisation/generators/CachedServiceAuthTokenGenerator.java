@@ -9,10 +9,10 @@ public class CachedServiceAuthTokenGenerator implements AuthTokenGenerator {
     private final Supplier<String> cachedSupplier;
 
     public CachedServiceAuthTokenGenerator(
-            final AuthTokenGenerator serviceAuthTokenGenerator,
+            final AuthTokenGenerator authTokenGenerator,
             final int ttlInSeconds
     ) {
-        cachedSupplier = memoizeWithExpiration(serviceAuthTokenGenerator::generate, ttlInSeconds, TimeUnit.SECONDS);
+        cachedSupplier = memoizeWithExpiration(authTokenGenerator::generate, ttlInSeconds, TimeUnit.SECONDS);
     }
 
     @Override
