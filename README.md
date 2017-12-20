@@ -16,14 +16,15 @@ The service provides a method to generate s2s auth token for a micro service and
 The project uses [Gradle](https://gradle.org) as a build tool but you don't have install it locally since there is a
 `./gradlew` wrapper script.  
 
-To build project please execute the following command:
+To build project execute the following command:
 
 ```bash
     ./gradlew build
 ```
 ## Configuration
 
-To use the services provided by this clients, they need to be instantiated in spring Configuration class
+To use the services provided by this clients, they need to be instantiated in spring `@Configuration` class, for example:
+
 ```java
    @Configuration
    @Lazy
@@ -36,25 +37,9 @@ To use the services provided by this clients, they need to be instantiated in sp
                @Value("${idam.s2s-auth.microservice}") final String microService,
                final ServiceAuthorisationApi serviceAuthorisationApi
        ) {
-           return new ServiceAuthTokenGenerator(secret, microService, serviceAuthorisationApi);
-       }
-   
-       @Bean
-       public AuthTokenGenerator cachedServiceAuthTokenGenerator(
-               @Qualifier("serviceAuthTokenGenerator") final AuthTokenGenerator serviceAuthTokenGenerator,
-               @Value("${idam.s2s-auth.tokenTimeToLiveInSeconds:14400}") final int ttl) {
-           return new CachedServiceAuthTokenGenerator(serviceAuthTokenGenerator, ttl);
+           return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
        }
 
-       @Bean
-       public AuthTokenGenerator autorefreshingJwtAuthTokenGenerator(
-               @Qualifier("serviceAuthTokenGenerator") final AuthTokenGenerator serviceAuthTokenGenerator,
-               @Value("${idam.s2s-auth.refreshTimeDeltaInSeconds}") final int refreshDeltaInSeconds) {
-           return new AutorefreshingJwtAuthTokenGenerator(
-               serviceAuthTokenGenerator,
-               Duration.of(refreshDeltaInSeconds, SECONDS)
-           );
-       }
    }
 ``` 
 
@@ -62,7 +47,7 @@ To use the services provided by this clients, they need to be instantiated in sp
 
 ### Unit tests
 
-To run all unit tests please execute the following command:
+To run all unit tests execute the following command:
 
 ```bash
     ./gradlew test
@@ -70,7 +55,7 @@ To run all unit tests please execute the following command:
 
 ### Coding style tests
 
-To run all checks (including unit tests) please execute the following command:
+To run all checks (including unit tests) execute the following command:
 
 ```bash
     ./gradlew check
