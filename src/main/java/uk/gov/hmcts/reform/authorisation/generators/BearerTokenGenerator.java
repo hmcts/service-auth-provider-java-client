@@ -8,7 +8,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class BearerTokenGenerator implements AuthTokenGenerator {
 
-    private AuthTokenGenerator decorated;
+    private final AuthTokenGenerator decorated;
 
     public BearerTokenGenerator(AuthTokenGenerator decorated) {
         this.decorated = requireNonNull(decorated);

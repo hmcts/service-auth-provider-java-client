@@ -4,7 +4,7 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import java.time.Duration;
 
-public class AuthTokenGeneratorFactory {
+public final class AuthTokenGeneratorFactory {
 
     public static AuthTokenGenerator createDefaultGenerator(
             String secret,
