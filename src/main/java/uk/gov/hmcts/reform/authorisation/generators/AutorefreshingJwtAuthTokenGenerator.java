@@ -18,7 +18,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
     private final AuthTokenGenerator generator;
     private final Duration refreshTimeDelta;
 
-    private DecodedJWT jwt = null;
+    private DecodedJWT jwt;
 
     /**
      * Constructor.
