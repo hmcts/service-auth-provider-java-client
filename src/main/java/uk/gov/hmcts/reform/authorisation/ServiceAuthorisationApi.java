@@ -14,6 +14,7 @@ public interface ServiceAuthorisationApi {
     String serviceToken(@RequestParam("microservice") final String microservice,
                         @RequestParam("oneTimePassword") final String oneTimePassword);
 
+    @SuppressWarnings("PMD.UseVarargs")
     @GetMapping(value = "/authorisation-check")
     void authorise(@RequestHeader(AUTHORIZATION) final String authHeader,
                    @RequestParam("role") final String[] roles);
