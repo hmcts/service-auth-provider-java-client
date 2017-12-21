@@ -33,9 +33,9 @@ public class ServiceExceptionValidatorTest {
 
     private final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
-    private Class<AbstractAuthorisationException> expectedException;
+    private final Class<AbstractAuthorisationException> expectedException;
 
-    private HttpStatus status;
+    private final HttpStatus status;
 
     @Parameterized.Parameters(name = "Testing for HTTP_STATUS {1}")
     public static Iterable<Object[]> data() {
