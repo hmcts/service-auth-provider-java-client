@@ -1,4 +1,5 @@
 plugins {
+    id 'pmd'
     id 'checkstyle' apply true
     id 'io.spring.dependency-management' version '1.0.3.RELEASE'
     id 'org.springframework.boot' version '1.5.9.RELEASE' apply true
@@ -14,6 +15,14 @@ version '0.4.0'
 checkstyle {
     maxWarnings = 0
     toolVersion = '8.5'
+}
+
+pmd {
+    toolVersion = "5.8.1"
+    ignoreFailures = true
+    sourceSets = [sourceSets.main, sourceSets.test]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    ruleSetFiles = files("$projectDir/ruleset.xml")
 }
 
 sourceCompatibility = 1.8
