@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.authorisation.validators;
 
 import java.util.List;
 
-interface AuthTokenValidator {
+public interface AuthTokenValidator {
 
     /**
      * Validate bearer token.
