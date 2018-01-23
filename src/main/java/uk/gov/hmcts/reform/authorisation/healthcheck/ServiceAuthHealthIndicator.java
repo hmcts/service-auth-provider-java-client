@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationHealthApi;
 
 @Component
-@ConditionalOnProperty(prefix = "idam.s2s-auth", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "idam.s2s-auth", name = "url")
 public class ServiceAuthHealthIndicator implements HealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAuthHealthIndicator.class);
