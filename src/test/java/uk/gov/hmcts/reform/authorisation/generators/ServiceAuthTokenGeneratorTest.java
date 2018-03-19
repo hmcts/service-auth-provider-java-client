@@ -22,7 +22,7 @@ public class ServiceAuthTokenGeneratorTest {
 
         //when
         final ServiceAuthTokenGenerator serviceAuthTokenGenerator = new ServiceAuthTokenGenerator(secret,
-                microService, serviceAuthorisationApi);
+            microService, serviceAuthorisationApi);
 
         final String result = serviceAuthTokenGenerator.generate();
 

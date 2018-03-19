@@ -14,9 +14,9 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     private final GoogleAuthenticator googleAuthenticator;
 
     public ServiceAuthTokenGenerator(
-            final String secret,
-            final String microService,
-            final ServiceAuthorisationApi serviceAuthorisationApi
+        final String secret,
+        final String microService,
+        final ServiceAuthorisationApi serviceAuthorisationApi
     ) {
         this.secret = secret;
         this.microService = microService;
