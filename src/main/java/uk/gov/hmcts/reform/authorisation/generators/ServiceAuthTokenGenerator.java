@@ -14,9 +14,9 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     private final GoogleAuthenticator googleAuthenticator;
 
     public ServiceAuthTokenGenerator(
-            final String secret,
-            final String microService,
-            final ServiceAuthorisationApi serviceAuthorisationApi
+        final String secret,
+        final String microService,
+        final ServiceAuthorisationApi serviceAuthorisationApi
     ) {
         this.secret = secret;
         this.microService = microService;
@@ -27,6 +27,6 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     @Override
     public String generate() {
         final String oneTimePassword = format("%06d", googleAuthenticator.getTotpPassword(secret));
-        return serviceAuthorisationApi.serviceToken(this.microService, oneTimePassword,0);
+        return serviceAuthorisationApi.serviceToken(this.microService, oneTimePassword, 0);
     }
 }

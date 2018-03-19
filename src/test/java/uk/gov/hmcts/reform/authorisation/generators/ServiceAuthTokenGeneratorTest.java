@@ -18,11 +18,11 @@ public class ServiceAuthTokenGeneratorTest {
         final String secret = "123456";
         final String microService = "microservice";
         final String serviceAuthToken = "service-auth-token";
-        when(serviceAuthorisationApi.serviceToken(eq(microService), anyString(),eq(0))).thenReturn(serviceAuthToken);
+        when(serviceAuthorisationApi.serviceToken(eq(microService), anyString(), eq(0))).thenReturn(serviceAuthToken);
 
         //when
         final ServiceAuthTokenGenerator serviceAuthTokenGenerator = new ServiceAuthTokenGenerator(secret,
-                microService, serviceAuthorisationApi);
+            microService, serviceAuthorisationApi);
 
         final String result = serviceAuthTokenGenerator.generate();
 
