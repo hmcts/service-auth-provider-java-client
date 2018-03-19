@@ -12,7 +12,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public interface ServiceAuthorisationApi {
     @PostMapping(value = "/lease")
     String serviceToken(@RequestParam("microservice") final String microservice,
-                        @RequestParam("oneTimePassword") final String oneTimePassword);
+                        @RequestParam("oneTimePassword") final String oneTimePassword,
+                        @RequestHeader("Content-Length") final int contentLength);
 
     @SuppressWarnings("PMD.UseVarargs")
     @GetMapping(value = "/authorisation-check")
