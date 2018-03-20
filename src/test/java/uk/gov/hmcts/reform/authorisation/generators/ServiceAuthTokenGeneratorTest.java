@@ -5,8 +5,8 @@ import org.mockito.Mockito;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 public class ServiceAuthTokenGeneratorTest {
@@ -18,7 +18,9 @@ public class ServiceAuthTokenGeneratorTest {
         final String secret = "123456";
         final String microService = "microservice";
         final String serviceAuthToken = "service-auth-token";
-        when(serviceAuthorisationApi.serviceToken(eq(microService), anyString())).thenReturn(serviceAuthToken);
+
+        when(serviceAuthorisationApi.serviceToken(anyMapOf(String.class, String.class), anyString()))
+            .thenReturn(serviceAuthToken);
 
         //when
         final ServiceAuthTokenGenerator serviceAuthTokenGenerator = new ServiceAuthTokenGenerator(secret,
