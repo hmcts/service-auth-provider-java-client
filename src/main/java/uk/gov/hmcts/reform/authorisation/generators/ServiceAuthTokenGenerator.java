@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
-import org.springframework.util.MimeTypeUtils;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import java.util.HashMap;
@@ -36,6 +35,6 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
         signInDetails.put("microservice", this.microService);
         signInDetails.put("oneTimePassword", oneTimePassword);
 
-        return serviceAuthorisationApi.serviceToken(signInDetails, MimeTypeUtils.APPLICATION_JSON_VALUE);
+        return serviceAuthorisationApi.serviceToken(signInDetails);
     }
 }
