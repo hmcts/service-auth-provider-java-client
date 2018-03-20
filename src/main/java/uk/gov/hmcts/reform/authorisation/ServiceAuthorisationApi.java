@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.authorisation;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +14,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @FeignClient(name = "idam-s2s-auth", url = "${idam.s2s-auth.url}")
 public interface ServiceAuthorisationApi {
-    @PostMapping(value = "/lease")
-    String serviceToken(@RequestBody Map<String, String> signIn,
-                        @RequestHeader("Content-Type") String contentType);
+
+    @PostMapping(value = "/lease", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    String serviceToken(@RequestBody Map<String, String> signIn);
 
     @SuppressWarnings("PMD.UseVarargs")
     @GetMapping(value = "/authorisation-check")
