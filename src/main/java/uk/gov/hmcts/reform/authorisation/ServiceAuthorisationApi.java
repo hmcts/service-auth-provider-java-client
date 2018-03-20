@@ -14,7 +14,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public interface ServiceAuthorisationApi {
     @PostMapping(value = "/lease")
     @Headers("Content-Type: application/json")
-    @Body("\"%7B\"microservice\":\"{microservice}\",\"oneTimePassword\":\"{oneTimePassword}\"%7D")
+    @Body("\"%7B\"microservice\":\"{microservice}\",\"one_time_password\":\"{oneTimePassword}\"%7D")
     String serviceToken(@RequestParam("microservice") final String microservice,
                         @RequestParam("oneTimePassword") final String oneTimePassword);
 
