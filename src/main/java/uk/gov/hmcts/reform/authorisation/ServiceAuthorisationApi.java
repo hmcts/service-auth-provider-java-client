@@ -11,7 +11,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @FeignClient(name = "idam-s2s-auth", url = "${idam.s2s-auth.url}")
 public interface ServiceAuthorisationApi {
-    @PostMapping(value = "/lease")
+    @PostMapping(value = "/lease/v1")
     @Body("\"%7B\"microservice\":\"{microservice}\",\"oneTimePassword\":\"{oneTimePassword}\"%7D")
     String serviceToken(@RequestParam("microservice") final String microservice,
                         @RequestParam("oneTimePassword") final String oneTimePassword);
