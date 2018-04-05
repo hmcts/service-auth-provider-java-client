@@ -2,7 +2,9 @@ package uk.gov.hmcts.reform.authorisation.validators;
 
 import feign.FeignException;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
-import uk.gov.hmcts.reform.authorisation.exceptions.AbstractAuthorisationException;
+import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
+import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
+import uk.gov.hmcts.reform.logging.exception.AbstractLoggingException;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +27,7 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
         try {
             api.authorise(token, roles.toArray(new String[roles.size()]));
         } catch (FeignException exception) {
-            throw AbstractAuthorisationException.parseFeignException(exception);
+            throw parseFeignException(exception);
         }
     }
 
@@ -34,7 +36,17 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
         try {
             return api.getServiceName(token);
         } catch (FeignException exception) {
-            throw AbstractAuthorisationException.parseFeignException(exception);
+            throw parseFeignException(exception);
+        }
+    }
+
+    private AbstractLoggingException parseFeignException(FeignException exception) {
+        boolean isClientError = exception.status() >= 400 && exception.status() <= 499;
+
+        if (isClientError) {
+            return new InvalidTokenException(exception.getMessage(), exception);
+        } else {
+            return new ServiceException(exception.getMessage(), exception);
         }
     }
 }
