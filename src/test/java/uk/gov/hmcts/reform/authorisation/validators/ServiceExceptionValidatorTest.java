@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
-import uk.gov.hmcts.reform.authorisation.exceptions.AbstractAuthorisationException;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
+import uk.gov.hmcts.reform.logging.exception.AbstractLoggingException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class ServiceExceptionValidatorTest {
 
     private final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
-    private final Class<AbstractAuthorisationException> expectedException;
+    private final Class<AbstractLoggingException> expectedException;
 
     private final HttpStatus status;
 
@@ -52,7 +52,7 @@ public class ServiceExceptionValidatorTest {
                 .collect(Collectors.toList());
     }
 
-    public ServiceExceptionValidatorTest(Class<AbstractAuthorisationException> expectedException,
+    public ServiceExceptionValidatorTest(Class<AbstractLoggingException> expectedException,
                                          HttpStatus status) {
         this.expectedException = expectedException;
         this.status = status;
