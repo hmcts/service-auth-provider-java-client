@@ -1,16 +1,16 @@
 plugins {
     id 'pmd'
-    id 'checkstyle' apply true
-    id 'io.spring.dependency-management' version '1.0.3.RELEASE'
-    id 'org.springframework.boot' version '1.5.9.RELEASE' apply true
-    id 'com.jfrog.bintray' version '1.8.0' apply true
-    id 'java-library' apply true
-    id 'maven' apply true
-    id 'maven-publish' apply true
+    id 'checkstyle'
+    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
+    id 'org.springframework.boot' version '2.0.1.RELEASE'
+    id 'com.jfrog.bintray' version '1.8.0'
+    id 'java-library'
+    id 'maven'
+    id 'maven-publish'
 }
 
 group 'uk.gov.hmcts.reform'
-version '0.6.0'
+version '1.0.0'
 
 checkstyle {
     maxWarnings = 0
@@ -38,6 +38,9 @@ compileTestJava {
 repositories {
     maven {
         url "https://dl.bintray.com/hmcts/hmcts-maven"
+    }
+    maven {
+        url 'https://repo.spring.io/libs-milestone'
     }
     jcenter()
     mavenLocal()
@@ -125,22 +128,21 @@ bintray {
 
 ext {
     reformLogging = '2.0.2'
-    springCloudVersion = 'Edgware.RELEASE'
+    springCloudVersion = 'Finchley.M9'
 }
 
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-feign'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
     compile group: 'com.netflix.feign', name: 'feign-jackson', version: '8.18.0'
     compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.2'
     compile group: 'com.auth0', name: 'java-jwt', version: '3.3.0'
 
-    compileOnly group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
+    compile group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
-    testCompile group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
 }
 
 dependencyManagement {
@@ -152,6 +154,10 @@ dependencyManagement {
     }
 }
 
-bootRepackage {
-    enabled = false;
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }
