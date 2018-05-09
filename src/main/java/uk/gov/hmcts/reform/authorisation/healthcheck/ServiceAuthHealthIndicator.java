@@ -40,22 +40,13 @@ public class ServiceAuthHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        return check();
-    }
-
-    private Health check() {
         try {
             InternalHealth internalHealth = this.serviceAuthorisationHealthApi.health();
             if (!internalHealth.getStatus().getCode().equalsIgnoreCase(Status.UP.getCode())) {
                 return new Health.Builder(internalHealth.getStatus()).build();
             } else {
                 String token = generateToken();
-                String serviceName = this.serviceAuthorisationApi.getServiceName(token);
-                if (!this.microService.equalsIgnoreCase(serviceName)) {
-                    String msg = "S2S token validation has failed - service name does not match";
-                    LOGGER.error(msg);
-                    return Health.down().withDetail("reason", msg).build();
-                }
+                this.serviceAuthorisationApi.getServiceName(token);
                 return Health.up().build();
             }
         } catch (Exception ex) {
