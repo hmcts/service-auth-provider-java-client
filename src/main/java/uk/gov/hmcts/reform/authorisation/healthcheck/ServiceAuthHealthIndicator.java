@@ -45,8 +45,7 @@ public class ServiceAuthHealthIndicator implements HealthIndicator {
             if (!internalHealth.getStatus().getCode().equalsIgnoreCase(Status.UP.getCode())) {
                 return new Health.Builder(internalHealth.getStatus()).build();
             } else {
-                String token = generateToken();
-                this.serviceAuthorisationApi.getServiceName(token);
+                this.serviceAuthorisationApi.getServiceName(generateToken());
                 return Health.up().build();
             }
         } catch (Exception ex) {
