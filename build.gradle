@@ -4,6 +4,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.5.RELEASE'
     id 'org.springframework.boot' version '2.0.1.RELEASE'
     id 'com.jfrog.bintray' version '1.8.0'
+    id 'org.owasp.dependencycheck' version '3.2.1'
+    id 'com.github.ben-manes.versions' version '0.20.0'
     id 'java-library'
     id 'maven'
     id 'maven-publish'
@@ -151,6 +153,19 @@ dependencyManagement {
     }
     dependencies {
         dependency group: 'com.google.guava', name: 'guava', version: '23.2-jre'
+    }
+}
+
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
     }
 }
 
