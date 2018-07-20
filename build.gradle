@@ -127,7 +127,7 @@ bintray {
 }
 
 ext {
-    reformLogging = '2.0.2'
+    reformLogging = '3.0.1'
 }
 
 dependencies {
