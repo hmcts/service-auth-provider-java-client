@@ -16,7 +16,8 @@ version '1.0.0'
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '8.5'
+    toolVersion = '8.11'
+    configDir = new File(rootDir, 'config/checkstyle')
 }
 
 pmd {
