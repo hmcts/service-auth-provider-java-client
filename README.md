@@ -1,3 +1,6 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/hmcts/service-auth-provider-java-client/badge.svg)](https://snyk.io/test/github/hmcts/service-auth-provider-java-client)
+[![GitHub version](https://badge.fury.io/gh/hmcts%2Fservice-auth-provider-java-client.svg)](https://badge.fury.io/gh/hmcts%2Fservice-auth-provider-java-client)
+
 # service-auth-provider-java-client
 
 This is the client library for the service-auth-provider api microservice.
