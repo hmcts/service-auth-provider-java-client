@@ -1,9 +1,11 @@
 plugins {
     id 'pmd'
     id 'checkstyle'
-    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
-    id 'org.springframework.boot' version '2.0.1.RELEASE'
-    id 'com.jfrog.bintray' version '1.8.0'
+    id 'io.spring.dependency-management' version '1.0.6.RELEASE'
+    id 'org.springframework.boot' version '2.0.3.RELEASE'
+    id 'com.jfrog.bintray' version '1.8.4'
+    id 'org.owasp.dependencycheck' version '3.2.1'
+    id 'com.github.ben-manes.versions' version '0.20.0'
     id 'java-library'
     id 'maven'
     id 'maven-publish'
@@ -14,7 +16,8 @@ version '1.0.0'
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '8.5'
+    toolVersion = '8.11'
+    configDir = new File(rootDir, 'config/checkstyle')
 }
 
 pmd {
@@ -38,9 +41,6 @@ compileTestJava {
 repositories {
     maven {
         url "https://dl.bintray.com/hmcts/hmcts-maven"
-    }
-    maven {
-        url 'https://repo.spring.io/libs-milestone'
     }
     jcenter()
     mavenLocal()
@@ -127,30 +127,48 @@ bintray {
 }
 
 ext {
-    reformLogging = '2.0.2'
-    springCloudVersion = 'Finchley.M9'
+    reformLogging = '3.0.1'
 }
 
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.0.0.RELEASE'
     compile group: 'com.netflix.feign', name: 'feign-jackson', version: '8.18.0'
-    compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.2'
-    compile group: 'com.auth0', name: 'java-jwt', version: '3.3.0'
+    compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.5'
+    compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'
 
     compile group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
-    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.10.0'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 }
 
 dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
     dependencies {
         dependency group: 'com.google.guava', name: 'guava', version: '23.2-jre'
+        dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
+    }
+}
+
+// https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
+dependencyCheck {
+    // Specifies if the build should be failed if a CVSS score above a specified level is identified.
+    // range of 0-10 fails the build, anything greater and it doesn't fail the build
+    failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
+    suppressionFile = 'config/owasp/suppressions.xml'
+}
+
+dependencyUpdates.resolutionStrategy = {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
     }
 }
 
