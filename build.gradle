@@ -147,6 +147,7 @@ dependencies {
 dependencyManagement {
     dependencies {
         dependency group: 'com.google.guava', name: 'guava', version: '23.2-jre'
+        dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
     }
 }
 
