@@ -2,9 +2,9 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
-    id 'org.springframework.boot' version '2.0.3.RELEASE'
+    id 'org.springframework.boot' version '2.0.5.RELEASE'
     id 'com.jfrog.bintray' version '1.8.4'
-    id 'org.owasp.dependencycheck' version '3.2.1'
+    id 'org.owasp.dependencycheck' version '3.3.2'
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'java-library'
     id 'maven'
@@ -12,7 +12,7 @@ plugins {
 }
 
 group 'uk.gov.hmcts.reform'
-version '1.0.3'
+version '1.0.4'
 
 checkstyle {
     maxWarnings = 0
@@ -132,8 +132,8 @@ ext {
 
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.0.0.RELEASE'
-    compile group: 'com.netflix.feign', name: 'feign-jackson', version: '8.18.0'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.0.1.RELEASE'
+    compile group: 'io.github.openfeign', name: 'feign-jackson', version: '9.5.1'
     compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.5'
     compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'
 
