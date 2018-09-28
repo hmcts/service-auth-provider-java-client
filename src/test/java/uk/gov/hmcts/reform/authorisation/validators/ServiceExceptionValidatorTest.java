@@ -60,7 +60,13 @@ public class ServiceExceptionValidatorTest {
 
     @Before
     public void setUp() {
-        Response feignResponse = Response.create(status.value(), "i must fail", Collections.emptyMap(), new byte[0]);
+        Response feignResponse = Response
+            .builder()
+            .status(status.value())
+            .body(new byte[0])
+            .reason("i must fail")
+            .headers(Collections.emptyMap())
+            .build();
         FeignException exception = FeignException.errorStatus("oh no", feignResponse);
 
         doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
