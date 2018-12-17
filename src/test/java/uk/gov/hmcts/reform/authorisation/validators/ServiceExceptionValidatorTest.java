@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
-import uk.gov.hmcts.reform.logging.exception.AbstractLoggingException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +32,7 @@ public class ServiceExceptionValidatorTest {
 
     private final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
-    private final Class<AbstractLoggingException> expectedException;
+    private final Class<RuntimeException> expectedException;
 
     private final HttpStatus status;
 
@@ -43,16 +42,16 @@ public class ServiceExceptionValidatorTest {
                 .filter(httpStatus -> httpStatus.is4xxClientError() || httpStatus.is5xxServerError())
                 .flatMap(httpStatus -> {
                     Class<?> expected = httpStatus.is4xxClientError()
-                        ? InvalidTokenException.class
-                        : ServiceException.class;
+                            ? InvalidTokenException.class
+                            : ServiceException.class;
                     return Arrays.stream(new Object[][]{
-                        {expected, httpStatus}
+                            {expected, httpStatus}
                     });
                 })
                 .collect(Collectors.toList());
     }
 
-    public ServiceExceptionValidatorTest(Class<AbstractLoggingException> expectedException,
+    public ServiceExceptionValidatorTest(Class<RuntimeException> expectedException,
                                          HttpStatus status) {
         this.expectedException = expectedException;
         this.status = status;
@@ -61,12 +60,12 @@ public class ServiceExceptionValidatorTest {
     @Before
     public void setUp() {
         Response feignResponse = Response
-            .builder()
-            .status(status.value())
-            .body(new byte[0])
-            .reason("i must fail")
-            .headers(Collections.emptyMap())
-            .build();
+                .builder()
+                .status(status.value())
+                .body(new byte[0])
+                .reason("i must fail")
+                .headers(Collections.emptyMap())
+                .build();
         FeignException exception = FeignException.errorStatus("oh no", feignResponse);
 
         doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
