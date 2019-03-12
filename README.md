@@ -25,8 +25,7 @@ To build project execute the following command:
     ./gradlew build
 ```
 ## Configuration
-
-To use the services provided by this clients, they need to be instantiated in spring `@Configuration` class, for example:
+The following values must be provided:
 ```yaml
 idam:
   s2s-auth:
@@ -35,6 +34,7 @@ idam:
     microservice: ccd_gw
 ```
 
+A spring bean:
 ```java
    @Configuration
    public class ServiceTokenGeneratorConfiguration {
