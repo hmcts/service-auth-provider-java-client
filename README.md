@@ -27,11 +27,16 @@ To build project execute the following command:
 ## Configuration
 
 To use the services provided by this clients, they need to be instantiated in spring `@Configuration` class, for example:
+```yaml
+idam:
+  s2s-auth:
+    url: http://localhost:4502
+    totp_secret: AAAAAAAAAAAAAAAC
+    microservice: ccd_gw
+```
 
 ```java
    @Configuration
-   @Lazy
-   @EnableFeignClients(basePackageClasses = ServiceAuthorisationApi.class)
    public class ServiceTokenGeneratorConfiguration {
    
        @Bean
