@@ -25,13 +25,18 @@ To build project execute the following command:
     ./gradlew build
 ```
 ## Configuration
+The following values must be provided:
+```yaml
+idam:
+  s2s-auth:
+    url: http://localhost:4502
+    totp_secret: AAAAAAAAAAAAAAAC
+    microservice: ccd_gw
+```
 
-To use the services provided by this clients, they need to be instantiated in spring `@Configuration` class, for example:
-
+A spring bean:
 ```java
    @Configuration
-   @Lazy
-   @EnableFeignClients(basePackageClasses = ServiceAuthorisationApi.class)
    public class ServiceTokenGeneratorConfiguration {
    
        @Bean
