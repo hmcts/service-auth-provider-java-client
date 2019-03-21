@@ -118,10 +118,6 @@ bintray {
     }
 }
 
-ext {
-    reformLogging = '4.0.0'
-}
-
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.1.1.RELEASE'
@@ -129,7 +125,7 @@ dependencies {
     compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.5'
     compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'
 
-    compile group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
+    compileOnly group: 'uk.gov.hmcts.reform', name: 'java-logging', version: '5.0.1'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.10.0'
