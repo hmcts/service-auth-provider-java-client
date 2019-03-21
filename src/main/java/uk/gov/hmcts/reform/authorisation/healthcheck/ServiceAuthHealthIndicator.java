@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationHealthApi;
 
-@Component
 public class ServiceAuthHealthIndicator implements HealthIndicator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAuthHealthIndicator.class);
