@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
 
+    <!-- spring security -->
+    <suppress>
+        <notes><![CDATA[No fix is available]]></notes>
+        <gav regex="true">^org\.springframework\.security:spring-security-rsa:1\.0\.7\.RELEASE$</gav>
+        <cve>CVE-2011-2731</cve>
+        <cve>CVE-2011-2732</cve>
+        <cve>CVE-2012-5055</cve>
+        <cve>CVE-2018-1260</cve>
+    </suppress>
+
 </suppressions>
