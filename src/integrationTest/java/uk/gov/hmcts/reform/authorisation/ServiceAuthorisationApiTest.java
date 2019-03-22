@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.authorisation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,8 +22,9 @@ import static org.springframework.http.HttpStatus.OK;
 @ActiveProfiles("wiremock")
 @AutoConfigureWireMock
 @ContextConfiguration(initializers = IntegrationTestInitializer.class)
+@EnableAutoConfiguration
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = IntegrationTestInitializer.class)
 public class ServiceAuthorisationApiTest {
 
     @Autowired
