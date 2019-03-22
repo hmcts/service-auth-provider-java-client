@@ -6,6 +6,9 @@ cache:
   directories:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
+script:
+  - ./gradlew test
+  - ./gradlew integration
 env:
   global:
   - secure: Nek/L/91J2HOSicMxQWk7O5qNIQsxqSA2H/s3aAtvNKNL/6tHqy6sxVSWBV+EBtvqqSJftQc2r4lDtbWkj9hiBTg/P8s67UH+hdHlaSkqMzs+LPBwwn/RlmbujyYxaaSPRmlW4pI7YRn1NY3+cBqwXHVae7WMDPpx3VazTYgwCWvqAkW0KnSBg7EYQ5nEqD6D2Up7FJhOeRvdVNLWuwtgJmWxM5HKJTT0iHCtoogardfqajTDBtAeRIEDIk0lw6J47Yp5RBT5ED8c88j+hTAYROw2FJ+nHAQpI3TCGT/JtD6VlqebQ91SfTvdhXxT+tWGiOc95wGsh34dsN4jWVxkq2v9F3jEQ8nbZbE0b9OYWCZK/D86jDEz7AJ3JL9C5Cqv+SmtK7aMCdqp43+7323bP1dnR/XqCGRvDrpuBs/Vz2DCXO/SFE/jfeQOEBPlYt8ad0wCB3f1lExys/rtQ/N713GRPIh4NETS84qLxkKhYybBsezpmulPNL7KdAL3hypX9lvvCmIBMWQXGJbhROrz2yz7aoolmpWZ1ZV/38i1mwWEIidBgLovKSwKfV44ohC7KEyNwySS2L8XnB6Hzhmfgst9CoCiW713uONpKbtjEmM3CfGZGQXkqTpJQuNwBkpMg8iW4VpUBIS6CNR6xE9yFVOMaOnX7GsG2bDt+x4x38=

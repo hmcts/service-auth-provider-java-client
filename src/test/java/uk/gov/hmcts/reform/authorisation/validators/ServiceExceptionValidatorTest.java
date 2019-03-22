@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.authorisation.validators;
 
 import feign.FeignException;
+import feign.Request;
 import feign.Response;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,8 +60,15 @@ public class ServiceExceptionValidatorTest {
 
     @Before
     public void setUp() {
+        Request request = Request.create(
+                Request.HttpMethod.GET,
+                "/test",
+                Collections.emptyMap(),
+                Request.Body.empty()
+        );
         Response feignResponse = Response
                 .builder()
+                .request(request)
                 .status(status.value())
                 .body(new byte[0])
                 .reason("i must fail")

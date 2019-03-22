@@ -1,0 +1,6 @@
+wiremock:
+  url: &wiremock "http://localhost:${wiremock.port}"
+
+idam:
+  s2s-auth:
+    url: *wiremock
