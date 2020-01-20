@@ -11,8 +11,10 @@ plugins {
     id 'maven-publish'
 }
 
+def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "DEV-SNAPSHOT"
+
 group 'uk.gov.hmcts.reform'
-version '3.0.0'
+version buildNumber
 
 sourceSets {
     integrationTest {
