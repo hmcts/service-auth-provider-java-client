@@ -46,7 +46,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
 
         } catch (RuntimeException ex) {
             LOG.warn("Unsuccessful service authentication", ex);
-            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return;
         }
         filterChain.doFilter(request, response);

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
 import javax.servlet.FilterChain;
@@ -59,7 +60,7 @@ public class ServiceAuthFilterTest {
     public void failUnAuthorizedServiceAccess() throws Exception {
         when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1+"fail");
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
-        verify(servletResponse, times(1)).setStatus(403);
+        verify(servletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
@@ -67,7 +68,7 @@ public class ServiceAuthFilterTest {
         Mockito.reset(servletRequest);
         when(servletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn(null);
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
-        verify(servletResponse, times(1)).setStatus(403);
+        verify(servletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test(expected = IllegalArgumentException.class)
