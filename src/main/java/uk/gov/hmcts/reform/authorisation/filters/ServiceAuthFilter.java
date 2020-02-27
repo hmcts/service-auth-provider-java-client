@@ -28,7 +28,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     public ServiceAuthFilter(AuthTokenValidator authTokenValidator,
-                             @Value("${idam.s2s-auth.url}") List<String> authorisedServices) {
+                             @Value("${s2s-authorised.services}") List<String> authorisedServices) {
 
         this.authTokenValidator = authTokenValidator;
         if (authorisedServices.isEmpty()) {
