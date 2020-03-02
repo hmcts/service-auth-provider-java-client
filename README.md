@@ -50,6 +50,13 @@ A spring bean:
 
    }
 ``` 
+##Configuration for Service Authentication filter
+The following values must be provided to enable a ServiceAuthFilter bean:
+```yaml
+idam:
+  s2s-authorised:
+    services: microservice1, microservice2
+```
 
 ## Developing
 

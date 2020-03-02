@@ -8,16 +8,20 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class )
+@RunWith(JUnit4.class)
 public class ServiceAuthFilterTest {
 
     private static final String SERVICE_1 = "service1";
@@ -58,7 +62,7 @@ public class ServiceAuthFilterTest {
 
     @Test
     public void failUnAuthorizedServiceAccess() throws Exception {
-        when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1+"fail");
+        when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1 + "fail");
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(servletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
     }

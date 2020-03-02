@@ -2,8 +2,6 @@ package uk.gov.hmcts.reform.authorisation.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
@@ -26,9 +24,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
 
     private final AuthTokenValidator authTokenValidator;
 
-    @Autowired
-    public ServiceAuthFilter(AuthTokenValidator authTokenValidator,
-                             @Value("${s2s-authorised.services}") List<String> authorisedServices) {
+    public ServiceAuthFilter(AuthTokenValidator authTokenValidator, List<String> authorisedServices) {
 
         this.authTokenValidator = authTokenValidator;
         if (authorisedServices.isEmpty()) {
