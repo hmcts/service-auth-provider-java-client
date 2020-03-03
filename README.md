@@ -50,13 +50,17 @@ A spring bean:
 
    }
 ``` 
-##Configuration for Service Authentication filter
+## Configuration for Service Authentication filter
 The following values must be provided to enable a ServiceAuthFilter bean:
 ```yaml
 idam:
   s2s-authorised:
     services: microservice1, microservice2
 ```
+ServiceAuthFilter bean is OncePerRequestFilter filter that you can add to your filter chain to authorise service 
+request. The filter will expect 'ServiceAuthorization' Bearer token as part of the request header that it will consume 
+to approve the request. Any requests from services that are not in your authorised services list will deny access 
+to your service and return an HTTP response status code 401.
 
 ## Developing
 
