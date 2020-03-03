@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
 import java.util.ArrayList;
@@ -61,8 +62,23 @@ public class ServiceAuthFilterTest {
     }
 
     @Test
-    public void failUnAuthorizedServiceAccess() throws Exception {
+    public void failForbiddenAccessServiceAccess() throws Exception {
         when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1 + "fail");
+        serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
+        verify(servletResponse, times(1)).setStatus(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    public void failUnAuthorizedServiceAccessIfServiceIsNull() throws Exception {
+        when(authTokenValidator.getServiceName(anyString())).thenReturn(null);
+        serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
+        verify(servletResponse, times(1)).setStatus(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    public void failUnAuthorizedServiceAccessIfServiceException() throws Exception {
+        when(authTokenValidator.getServiceName(anyString()))
+                .thenThrow(new ServiceException("not reachable", new RuntimeException()));
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(servletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
     }

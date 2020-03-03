@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.authorisation.config.IntegrationTestInitializer;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
+import wiremock.org.eclipse.jetty.http.HttpStatus;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -34,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -50,8 +52,6 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(classes = IntegrationTestInitializer.class)
 public class ServiceAuthorisationApiTest {
 
-    private static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
-
     @Autowired
     private ServiceAuthorisationApi s2sApi;
 
@@ -63,11 +63,11 @@ public class ServiceAuthorisationApiTest {
     private HttpServletRequest httpServletRequest;
 
     @Before
-    public  void before() {
+    public void before() {
         Assert.assertNotNull(serviceAuthFilter);
         filterChain = spy(FilterChain.class);
         httpServletRequest = mock(HttpServletRequest.class);
-        when(httpServletRequest.getHeader(SERVICE_AUTHORIZATION)).thenReturn("token");
+        when(httpServletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn("token");
     }
 
     @Test
@@ -81,14 +81,24 @@ public class ServiceAuthorisationApiTest {
     public void should_pass_serviceAuthFilter_with_authorized_access() throws ServletException, IOException {
         givenThat(get("/details").willReturn(status(OK.value()).withBody("service1")));
         serviceAuthFilter.doFilter(httpServletRequest, mock(HttpServletResponse.class), filterChain);
-        Mockito.verify(filterChain).doFilter(Matchers.any(), Matchers.any());
+        Mockito.verify(filterChain, times(1)).doFilter(Matchers.any(), Matchers.any());
     }
 
     @Test
     public void should_fail_serviceAuthFilter_with_Unauthorized_access() throws ServletException, IOException {
-        givenThat(get("/details").willReturn(status(OK.value()).withBody("service")));
-        serviceAuthFilter.doFilter(httpServletRequest, mock(HttpServletResponse.class), filterChain);
+        givenThat(get("/details").willReturn(status(OK.value()).withStatus(HttpStatus.GATEWAY_TIMEOUT_504)));
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
+        Mockito.verify(response, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
         Mockito.verify(filterChain, never()).doFilter(Matchers.any(), Matchers.any());
     }
 
+    @Test
+    public void should_fail_serviceAuthFilter_with_Forbidden_access() throws ServletException, IOException {
+        givenThat(get("/details").willReturn(status(OK.value()).withBody("service")));
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
+        Mockito.verify(response, times(1)).setStatus(HttpStatus.FORBIDDEN_403);
+        Mockito.verify(filterChain, never()).doFilter(Matchers.any(), Matchers.any());
+    }
 }

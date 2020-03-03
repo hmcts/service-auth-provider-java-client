@@ -60,7 +60,8 @@ idam:
 ServiceAuthFilter bean is OncePerRequestFilter filter that you can add to your filter chain to authorise service 
 request. The filter will expect 'ServiceAuthorization' Bearer token as part of the request header that it will consume 
 to approve the request. Any requests from services that are not in your authorised services list will deny access 
-to your service and return an HTTP response status code 401.
+to your service and return an HTTP response status code 403 (forbidden) and for any other reasons if the token is
+missing, invalid or failure to verify will result in 401(unauthorized).
 
 ## Developing
 
