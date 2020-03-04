@@ -29,7 +29,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
     public ServiceAuthFilter(AuthTokenValidator authTokenValidator, List<String> authorisedServices) {
 
         this.authTokenValidator = authTokenValidator;
-        if (authorisedServices.isEmpty()) {
+        if (authorisedServices == null || authorisedServices.isEmpty()) {
             throw new IllegalArgumentException("Must have at least one service defined");
         }
         this.authorisedServices = authorisedServices.stream()
