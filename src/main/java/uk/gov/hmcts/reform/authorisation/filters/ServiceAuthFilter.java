@@ -44,7 +44,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
 
             String bearerToken = extractBearerToken(request);
             String serviceName = authTokenValidator.getServiceName(bearerToken);
-            if (serviceName == null || !authorisedServices.contains(serviceName)) {
+            if (!authorisedServices.contains(serviceName)) {
                 LOG.debug("service forbidden {}", serviceName);
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             } else {
