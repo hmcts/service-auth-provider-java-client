@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.authorisation;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,16 @@ public class ServiceAuthAutoConfiguration {
 
         AuthTokenValidator authTokenValidator = new ServiceAuthTokenValidator(authorisationApi);
         return new ServiceAuthFilter(authTokenValidator, authorisedServices);
+
+    }
+
+    @Bean
+    @ConditionalOnProperty("idam.s2s-authorised.services")
+    public FilterRegistrationBean deRegisterServiceAuthFilter(ServiceAuthFilter serviceAuthFilter) {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(serviceAuthFilter);
+        filterRegistrationBean.setEnabled(false);
+        return  filterRegistrationBean;
     }
 
 }
