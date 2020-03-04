@@ -17,7 +17,7 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
 
     private final ServiceAuthorisationApi api;
 
-    @Autowired (required = true)
+    @Autowired
     public ServiceAuthTokenValidator(ServiceAuthorisationApi api) {
         this.api = api;
     }
