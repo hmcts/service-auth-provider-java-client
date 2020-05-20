@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.authorisation.validators;
 
 import feign.FeignException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
 import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
@@ -8,10 +11,13 @@ import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
 import java.util.Collections;
 import java.util.List;
 
+@Component
+@ConditionalOnProperty("idam.s2s-authorised.services")
 public class ServiceAuthTokenValidator implements AuthTokenValidator {
 
     private final ServiceAuthorisationApi api;
 
+    @Autowired
     public ServiceAuthTokenValidator(ServiceAuthorisationApi api) {
         this.api = api;
     }
