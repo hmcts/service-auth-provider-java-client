@@ -63,6 +63,26 @@ to approve the request. Any requests from services that are not in your authoris
 to your service and return an HTTP response status code 403 (forbidden) and for any other reasons if the token is
 missing, invalid or failure to verify will result in 401(unauthorized).
 
+## Running in a non spring context
+
+You might want to use this client when not running in a spring context, i.e. a scheduled job possibly.
+
+```java
+private static AuthTokenGenerator getAuthTokenGenerator(String s2sURL, String clientId, String clientSecret) {
+    HttpMessageConverter<?> jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
+    ObjectFactory<HttpMessageConverters> converter = () -> new HttpMessageConverters(jsonConverter);
+
+    ServiceAuthorisationApi serviceAuthorisationApi = Feign.builder()
+            .contract(new SpringMvcContract())
+            .encoder(new SpringEncoder(converter))
+            .decoder(new StringDecoder())
+            .target(ServiceAuthorisationApi.class, s2sURL);
+
+    return AuthTokenGeneratorFactory
+            .createDefaultGenerator(clientSecret, clientId, serviceAuthorisationApi);
+}
+```
+
 ## Developing
 
 ### Unit tests
