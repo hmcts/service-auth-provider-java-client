@@ -46,7 +46,10 @@ task integration(type: Test, description: 'Runs the integration tests.', group: 
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-sourceCompatibility = 1.8
+allprojects {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
 
 compileJava {
     options.compilerArgs << '-parameters' << '-Xlint:deprecation'
