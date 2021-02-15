@@ -22,11 +22,6 @@ jobs:
           java-version: 11
       - name: Build
         run: ./gradlew check
-      - name: ContractTest
-        env:
-          PACT_BROKER_FULL_URL: https://pact-broker.platform.hmcts.net
-          PACT_BRANCH_NAME: master
-        run: ./gradlew runAndPublishConsumerPactTests
       - name: Release
         env:
           BINTRAY_USER: jenkins-reform-hmcts
