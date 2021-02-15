@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.authorisation;
 
-
 import au.com.dius.pact.consumer.dsl.PactDslRootValue;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
