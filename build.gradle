@@ -9,6 +9,7 @@ plugins {
     id 'java-library'
     id 'maven'
     id 'maven-publish'
+    id 'au.com.dius.pact' version '4.1.11'
 }
 
 def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
@@ -24,6 +25,14 @@ sourceSets {
             srcDir file('src/integrationTest/java')
         }
         resources.srcDir file('src/integrationTest/resources')
+    }
+    contractTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/contractTest/java')
+        }
+        resources.srcDir file('src/contractTest/resources')
     }
 }
 
@@ -88,6 +97,25 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
+task contract(type: Test) {
+    description = 'Runs the consumer Pact tests'
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.contractTest.output.classesDirs
+    classpath = sourceSets.contractTest.runtimeClasspath
+    systemProperty 'pact.rootDir', "pacts"
+}
+
+task runAndPublishConsumerPactTests(type: Test){
+    logger.lifecycle("Runs pact Tests")
+    testClassesDirs = sourceSets.contractTest.output.classesDirs
+    classpath = sourceSets.contractTest.runtimeClasspath
+
+}
+
+runAndPublishConsumerPactTests.dependsOn contract
+
+runAndPublishConsumerPactTests.finalizedBy pactPublish
 
 artifacts {
     archives sourcesJar
@@ -157,6 +185,16 @@ dependencies {
     integrationTestCompile sourceSets.test.runtimeClasspath
     integrationTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.0.1'
+
+    contractTestCompile group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestRuntime group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    contractTestCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    contractTestRuntime("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+
+    contractTestCompile sourceSets.main.runtimeClasspath
+    contractTestCompile sourceSets.test.runtimeClasspath
 }
 
 dependencyManagement {
@@ -190,4 +228,21 @@ bootJar {
 
 jar {
     enabled = true
+}
+
+project.ext {
+    pactVersion = getCheckedOutGitCommitHash()
+}
+
+def getCheckedOutGitCommitHash() {
+    'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
+
+pact {
+    publish {
+        pactDirectory = 'pacts'
+        pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+        tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+        version = project.pactVersion
+    }
 }
