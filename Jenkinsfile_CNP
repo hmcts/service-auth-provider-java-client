@@ -9,6 +9,8 @@ def product = "rpe"
 def component = "service-auth-provider-client"
 
 withPactTestOnlyPipeline(type, product, component) {
+    env.PACT_BROKER_FULL_URL = 'https://pact-broker.platform.hmcts.net'
+    env.PACT_BRANCH_NAME = 'master'
     enablePactAs([
             AppPipelineDsl.PactRoles.CONSUMER
     ])
