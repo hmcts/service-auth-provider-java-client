@@ -1,0 +1,16 @@
+#!groovy
+
+@Library("Infrastructure")
+
+import uk.gov.hmcts.contino.AppPipelineDsl
+
+def type = "java"
+def product = "rpe"
+def component = "service-auth-provider-client"
+
+withPactTestOnlyPipeline(type, product, component) {
+    enablePactAs([
+            AppPipelineDsl.PactRoles.CONSUMER
+    ])
+}
+
