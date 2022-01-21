@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.authorisation;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ServiceAuthAutoConfiguration {
 
     @Bean
+    @ConditionalOnEnabledHealthIndicator("serviceAuth")
     public ServiceAuthHealthIndicator serviceAuthHealthIndicator(ServiceAuthorisationHealthApi coreCaseDataApi) {
         return new ServiceAuthHealthIndicator(coreCaseDataApi);
     }
