@@ -5,9 +5,7 @@ import feign.Request;
 import feign.RequestTemplate;
 import feign.Response;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.http.HttpStatus;
@@ -26,9 +24,6 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class ServiceExceptionValidatorTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     private final ServiceAuthorisationApi api = mock(ServiceAuthorisationApi.class);
 
@@ -81,10 +76,8 @@ public class ServiceExceptionValidatorTest {
         doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
     }
 
-    @Test
+    @Test(expected =  RuntimeException.class)
     public void checkExceptions() {
-        exception.expect(expectedException);
-
         validator.validate("some-invalid-token");
     }
 }
