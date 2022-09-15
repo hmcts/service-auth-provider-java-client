@@ -207,6 +207,7 @@ bootJar {
 
 jar {
     enabled = true
+    archiveClassifier = ''
 }
 
 project.ext {
