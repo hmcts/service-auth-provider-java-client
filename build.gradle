@@ -2,11 +2,10 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.0.13.RELEASE'
-    id 'org.springframework.boot' version '2.4.2'
-    id 'org.owasp.dependencycheck' version '6.0.5'
+    id 'org.springframework.boot' version '2.7.3'
+    id 'org.owasp.dependencycheck' version '7.2.0'
     id 'com.github.ben-manes.versions' version '0.42.0'
     id 'java-library'
-    id 'maven'
     id 'maven-publish'
     id 'au.com.dius.pact' version '4.1.11'
 }
@@ -38,7 +37,7 @@ sourceSets {
 checkstyle {
     maxWarnings = 0
     toolVersion = '8.18'
-    configDir = new File(rootDir, 'config/checkstyle')
+    configDirectory = new File(rootDir, 'config/checkstyle')
 }
 
 pmd {
@@ -147,31 +146,31 @@ publishing {
 }
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.4'
-    compile group: 'io.github.openfeign', name: 'feign-jackson', version: '10.12'
-    compile group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
-    compile group: 'com.auth0', name: 'java-jwt', version: '3.12.0'
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.4'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.9.1'
+    implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
+    implementation group: 'com.auth0', name: 'java-jwt', version: '3.12.0'
+    implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
 
-    testCompile group: 'junit', name: 'junit', version: '4.13.1'
-    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.18.1'
-    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.18.1'
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 
-    integrationTestCompile sourceSets.main.runtimeClasspath
-    integrationTestCompile sourceSets.test.runtimeClasspath
-    integrationTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.0.1'
+    integrationTestImplementation sourceSets.main.runtimeClasspath
+    integrationTestImplementation sourceSets.test.runtimeClasspath
+    integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.4'
 
-    contractTestCompile group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
-    contractTestRuntime group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
-    contractTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    contractTestCompile("org.junit.jupiter:junit-jupiter-api:5.3.2")
-    contractTestRuntime("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')
 
-    contractTestCompile sourceSets.main.runtimeClasspath
-    contractTestCompile sourceSets.test.runtimeClasspath
+    contractTestImplementation sourceSets.main.runtimeClasspath
+    contractTestImplementation sourceSets.test.runtimeClasspath
 }
 
 dependencyManagement {
