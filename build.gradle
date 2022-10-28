@@ -165,8 +165,8 @@ dependencies {
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.4'
 
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.3.14'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.3.16'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.3.16'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.9.0")
