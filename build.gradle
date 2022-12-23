@@ -7,7 +7,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.44.0'
     id 'java-library'
     id 'maven-publish'
-    id 'au.com.dius.pact' version '4.3.17'
+    id 'au.com.dius.pact' version '4.4.3'
 }
 
 def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
