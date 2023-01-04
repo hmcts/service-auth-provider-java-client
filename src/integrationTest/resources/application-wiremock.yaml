@@ -1,5 +1,5 @@
 wiremock:
-  url: &wiremock "http://localhost:${wiremock.port}"
+  url: &wiremock "http://localhost:${wiremock.server.port}"
 
 idam:
   s2s-auth:

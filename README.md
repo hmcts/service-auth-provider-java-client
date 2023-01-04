@@ -1,6 +1,3 @@
-[![Known Vulnerabilities](https://snyk.io/test/github/hmcts/service-auth-provider-java-client/badge.svg)](https://snyk.io/test/github/hmcts/service-auth-provider-java-client)
-[ ![Download](https://api.bintray.com/packages/hmcts/hmcts-maven/service-auth-provider-client/images/download.svg) ](https://bintray.com/hmcts/hmcts-maven/service-auth-provider-client/_latestVersion)
-
 # service-auth-provider-java-client
 
 This is the client library for the service-auth-provider api microservice.
@@ -11,18 +8,18 @@ The tool provides a method to generate s2s auth token for a microservice and, op
 
 ### Prerequisites
 
-- [JDK 8](https://www.oracle.com/java)
+- [Java 17](https://adoptium.net/)
 - [Docker](https://www.docker.com)
 
 ### Building
 
-The project uses [Gradle](https://gradle.org) as a build tool but you don't have install it locally since there is a
+The project uses [Gradle](https://gradle.org) as a build tool, but you don't have to install it locally since there is a
 `./gradlew` wrapper script.  
 
-To build project execute the following command:
+To build the project run the following command:
 
 ```bash
-    ./gradlew build
+./gradlew build
 ```
 ## Configuration
 The following values must be provided:
@@ -36,19 +33,17 @@ idam:
 
 A spring bean:
 ```java
-   @Configuration
-   public class ServiceTokenGeneratorConfiguration {
-   
-       @Bean
-       public AuthTokenGenerator serviceAuthTokenGenerator(
-               @Value("${idam.s2s-auth.totp_secret}") final String secret,
-               @Value("${idam.s2s-auth.microservice}") final String microService,
-               final ServiceAuthorisationApi serviceAuthorisationApi
-       ) {
-           return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
-       }
-
+@Configuration
+public class ServiceTokenGeneratorConfiguration {
+   @Bean
+   public AuthTokenGenerator serviceAuthTokenGenerator(
+           @Value("${idam.s2s-auth.totp_secret}") final String secret,
+           @Value("${idam.s2s-auth.microservice}") final String microService,
+           final ServiceAuthorisationApi serviceAuthorisationApi
+   ) {
+       return AuthTokenGeneratorFactory.createDefaultGenerator(secret, microService, serviceAuthorisationApi);
    }
+}
 ``` 
 ## Configuration for Service Authentication filter
 The following values must be provided to enable a ServiceAuthFilter bean:
@@ -63,23 +58,25 @@ to approve the request. Any requests from services that are not in your authoris
 to your service and return an HTTP response status code 403 (forbidden) and for any other reasons if the token is
 missing, invalid or failure to verify will result in 401(unauthorized).
 
-## Running in a non spring context
+## Running without Sprint
 
 You might want to use this client when not running in a spring context, i.e. a scheduled job possibly.
 
 ```java
-private static AuthTokenGenerator getAuthTokenGenerator(String s2sURL, String clientId, String clientSecret) {
-    HttpMessageConverter<?> jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
-    ObjectFactory<HttpMessageConverters> converter = () -> new HttpMessageConverters(jsonConverter);
-
-    ServiceAuthorisationApi serviceAuthorisationApi = Feign.builder()
-            .contract(new SpringMvcContract())
-            .encoder(new SpringEncoder(converter))
-            .decoder(new StringDecoder())
-            .target(ServiceAuthorisationApi.class, s2sURL);
-
-    return AuthTokenGeneratorFactory
-            .createDefaultGenerator(clientSecret, clientId, serviceAuthorisationApi);
+class ServiceTokenGenerator {
+    private static AuthTokenGenerator getAuthTokenGenerator(String s2sURL, String clientId, String clientSecret) {
+        HttpMessageConverter<?> jsonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
+        ObjectFactory<HttpMessageConverters> converter = () -> new HttpMessageConverters(jsonConverter);
+    
+        ServiceAuthorisationApi serviceAuthorisationApi = Feign.builder()
+                .contract(new SpringMvcContract())
+                .encoder(new SpringEncoder(converter))
+                .decoder(new StringDecoder())
+                .target(ServiceAuthorisationApi.class, s2sURL);
+    
+        return AuthTokenGeneratorFactory
+                .createDefaultGenerator(clientSecret, clientId, serviceAuthorisationApi);
+    }
 }
 ```
 
@@ -90,7 +87,7 @@ private static AuthTokenGenerator getAuthTokenGenerator(String s2sURL, String cl
 To run all unit tests execute the following command:
 
 ```bash
-    ./gradlew test
+./gradlew test
 ```
 
 ### Coding style tests
@@ -98,7 +95,7 @@ To run all unit tests execute the following command:
 To run all checks (including unit tests) execute the following command:
 
 ```bash
-    ./gradlew check
+./gradlew check
 ```
 
 ## Versioning

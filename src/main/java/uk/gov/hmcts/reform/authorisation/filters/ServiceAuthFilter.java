@@ -27,7 +27,7 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
     private final AuthTokenValidator authTokenValidator;
 
     public ServiceAuthFilter(AuthTokenValidator authTokenValidator, List<String> authorisedServices) {
-
+        super();
         this.authTokenValidator = authTokenValidator;
         if (authorisedServices == null || authorisedServices.isEmpty()) {
             throw new IllegalArgumentException("Must have at least one service defined");
@@ -38,21 +38,14 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
+    @SuppressWarnings("PMD.LawOfDemeter")
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
 
             String bearerToken = extractBearerToken(request);
             String serviceName = authTokenValidator.getServiceName(bearerToken);
-            if (!authorisedServices.contains(serviceName)) {
-                LOG.debug(
-                        "service forbidden {} for endpoint: {} method: {} ",
-                        serviceName,
-                        request.getRequestURI(),
-                        request.getMethod()
-                );
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-            } else {
+            if (authorisedServices.contains(serviceName)) {
                 LOG.debug(
                         "service authorized {} for endpoint: {} method: {}  ",
                         serviceName,
@@ -60,6 +53,14 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
                         request.getMethod()
                 );
                 filterChain.doFilter(request, response);
+            } else {
+                LOG.debug(
+                        "service forbidden {} for endpoint: {} method: {} ",
+                        serviceName,
+                        request.getRequestURI(),
+                        request.getMethod()
+                );
+                response.setStatus(HttpStatus.FORBIDDEN.value());
             }
         } catch (InvalidTokenException | ServiceException exception) {
             LOG.warn("Unsuccessful service authentication", exception);

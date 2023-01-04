@@ -10,15 +10,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
-import uk.gov.hmcts.reform.authorisation.exceptions.InvalidTokenException;
-import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -29,32 +27,24 @@ public class ServiceExceptionValidatorTest {
 
     private final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
 
-    private final Class<RuntimeException> expectedException;
-
     private final HttpStatus status;
 
     @Parameterized.Parameters(name = "Testing for HTTP_STATUS {1}")
     public static Iterable<Object[]> data() {
         return Arrays.stream(HttpStatus.values())
                 .filter(httpStatus -> httpStatus.is4xxClientError() || httpStatus.is5xxServerError())
-                .flatMap(httpStatus -> {
-                    Class<?> expected = httpStatus.is4xxClientError()
-                            ? InvalidTokenException.class
-                            : ServiceException.class;
-                    return Arrays.stream(new Object[][]{
-                            {expected, httpStatus}
-                    });
-                })
+                .flatMap(httpStatus -> Arrays.stream(new Object[][]{
+                        {httpStatus}
+                }))
                 .collect(Collectors.toList());
     }
 
-    public ServiceExceptionValidatorTest(Class<RuntimeException> expectedException,
-                                         HttpStatus status) {
-        this.expectedException = expectedException;
+    public ServiceExceptionValidatorTest(HttpStatus status) {
         this.status = status;
     }
 
     @Before
+    @SuppressWarnings({"PMD.LawOfDemeter", "PMD.DataflowAnomalyAnalysis"})
     public void setUp() {
         Request request = Request.create(
                 Request.HttpMethod.GET,
@@ -63,17 +53,17 @@ public class ServiceExceptionValidatorTest {
                 Request.Body.empty(),
                 new RequestTemplate()
         );
-        Response feignResponse = Response
+        try (Response feignResponse = Response
                 .builder()
                 .request(request)
                 .status(status.value())
                 .body(new byte[0])
                 .reason("i must fail")
                 .headers(Collections.emptyMap())
-                .build();
-        FeignException exception = FeignException.errorStatus("oh no", feignResponse);
-
-        doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
+                .build()) {
+            FeignException exception = FeignException.errorStatus("oh no", feignResponse);
+            doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
+        }
     }
 
     @Test(expected =  RuntimeException.class)

@@ -27,21 +27,21 @@ public class ServiceAuthAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty("idam.s2s-authorised.services")
-    public ServiceAuthFilter serviceAuthFiler(ServiceAuthorisationApi authorisationApi,
-                                      @Value("${idam.s2s-authorised.services}") List<String> authorisedServices) {
-
+    public ServiceAuthFilter serviceAuthFiler(
+            ServiceAuthorisationApi authorisationApi,
+            @Value("${idam.s2s-authorised.services}") List<String> authorisedServices
+    ) {
         AuthTokenValidator authTokenValidator = new ServiceAuthTokenValidator(authorisationApi);
         return new ServiceAuthFilter(authTokenValidator, authorisedServices);
-
     }
 
     @Bean
     @ConditionalOnProperty("idam.s2s-authorised.services")
-    public FilterRegistrationBean deRegisterServiceAuthFilter(ServiceAuthFilter serviceAuthFilter) {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+    public FilterRegistrationBean<ServiceAuthFilter> deRegisterServiceAuthFilter(ServiceAuthFilter serviceAuthFilter) {
+        FilterRegistrationBean<ServiceAuthFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(serviceAuthFilter);
         filterRegistrationBean.setEnabled(false);
-        return  filterRegistrationBean;
+        return filterRegistrationBean;
     }
 
 }
