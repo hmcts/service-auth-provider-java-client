@@ -30,7 +30,7 @@ public class ServiceAuthTokenValidator implements AuthTokenValidator {
     @Override
     public void validate(String token, final List<String> roles) {
         try {
-            api.authorise(token, roles.toArray(new String[roles.size()]));
+            api.authorise(token, roles.toArray(new String[0]));
         } catch (FeignException exception) {
             throw parseFeignException(exception);
         }

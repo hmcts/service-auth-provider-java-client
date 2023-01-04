@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.authorisation.generators;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -31,9 +30,10 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     public String generate() {
         final String oneTimePassword = format("%06d", googleAuthenticator.getTotpPassword(secret));
 
-        Map<String, String> signInDetails = new HashMap<>();
-        signInDetails.put("microservice", this.microService);
-        signInDetails.put("oneTimePassword", oneTimePassword);
+        Map<String, String> signInDetails = Map.of(
+                "microservice", this.microService,
+                "oneTimePassword", oneTimePassword
+        );
 
         return serviceAuthorisationApi.serviceToken(signInDetails);
     }

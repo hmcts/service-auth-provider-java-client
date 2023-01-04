@@ -22,5 +22,5 @@ public interface AuthTokenValidator {
      * @param token Bearer token
      * @return Service name
      */
-    String getServiceName(final String token);
+    String getServiceName(String token);
 }

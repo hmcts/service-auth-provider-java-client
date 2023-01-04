@@ -1,11 +1,8 @@
 package uk.gov.hmcts.reform.authorisation;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -13,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.authorisation.config.IntegrationTestInitializer;
@@ -32,16 +28,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
 @ActiveProfiles("wiremock")
-@AutoConfigureWireMock
-@ContextConfiguration(initializers = IntegrationTestInitializer.class)
+@AutoConfigureWireMock(port = 0)
 @ComponentScan
 @EnableAutoConfiguration
 @EnableConfigurationProperties()
@@ -50,8 +47,11 @@ import static org.springframework.http.HttpStatus.OK;
 })
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IntegrationTestInitializer.class)
+@SuppressWarnings("PMD.ExcessiveImports")
 public class ServiceAuthorisationApiTest {
 
+    private static final String DETAILS_ENDPOINT = "/details";
+    private static final String DEFAULT_SERVICE = "service";
     @Autowired
     private ServiceAuthorisationApi s2sApi;
 
@@ -64,7 +64,6 @@ public class ServiceAuthorisationApiTest {
 
     @Before
     public void before() {
-        Assert.assertNotNull(serviceAuthFilter);
         filterChain = spy(FilterChain.class);
         httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn("token");
@@ -73,32 +72,32 @@ public class ServiceAuthorisationApiTest {
     @Test
     public void should_get_service_name_providing_valid_token() {
         AuthTokenValidator validator = new ServiceAuthTokenValidator(s2sApi);
-        givenThat(get("/details").willReturn(status(OK.value()).withBody("service")));
-        assertThat(validator.getServiceName("token")).isEqualTo("service");
+        givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody(DEFAULT_SERVICE)));
+        assertThat(validator.getServiceName("token")).isEqualTo(DEFAULT_SERVICE);
     }
 
     @Test
     public void should_pass_serviceAuthFilter_with_authorized_access() throws ServletException, IOException {
-        givenThat(get("/details").willReturn(status(OK.value()).withBody("service1")));
+        givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody("service1")));
         serviceAuthFilter.doFilter(httpServletRequest, mock(HttpServletResponse.class), filterChain);
-        Mockito.verify(filterChain, times(1)).doFilter(Matchers.any(), Matchers.any());
+        verify(filterChain, times(1)).doFilter(any(), any());
     }
 
     @Test
     public void should_fail_serviceAuthFilter_with_Unauthorized_access() throws ServletException, IOException {
-        givenThat(get("/details").willReturn(status(OK.value()).withStatus(HttpStatus.GATEWAY_TIMEOUT_504)));
+        givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withStatus(HttpStatus.GATEWAY_TIMEOUT_504)));
         HttpServletResponse response = mock(HttpServletResponse.class);
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
-        Mockito.verify(response, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
-        Mockito.verify(filterChain, never()).doFilter(Matchers.any(), Matchers.any());
+        verify(response, times(1)).setStatus(HttpStatus.UNAUTHORIZED_401);
+        verify(filterChain, never()).doFilter(any(), any());
     }
 
     @Test
     public void should_fail_serviceAuthFilter_with_Forbidden_access() throws ServletException, IOException {
-        givenThat(get("/details").willReturn(status(OK.value()).withBody("service")));
+        givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody(DEFAULT_SERVICE)));
         HttpServletResponse response = mock(HttpServletResponse.class);
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
-        Mockito.verify(response, times(1)).setStatus(HttpStatus.FORBIDDEN_403);
-        Mockito.verify(filterChain, never()).doFilter(Matchers.any(), Matchers.any());
+        verify(response, times(1)).setStatus(HttpStatus.FORBIDDEN_403);
+        verify(filterChain, never()).doFilter(any(), any());
     }
 }

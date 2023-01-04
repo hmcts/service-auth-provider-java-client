@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.authorisation.exceptions.JwtDecodingException;
 
 import java.time.Duration;
@@ -105,7 +105,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
         );
 
         // when
-        repeat(2, () -> jwtGenerator.generate());
+        repeat(2, jwtGenerator::generate);
 
         // then
         // it should request a new token

@@ -29,16 +29,16 @@ public interface ServiceAuthorisationApi {
     String serviceToken(@RequestBody Map<String, String> signIn);
 
     @SuppressWarnings("PMD.UseVarargs")
-    @GetMapping(value = "/authorisation-check")
-    void authorise(@RequestHeader(AUTHORIZATION) final String authHeader,
-                   @RequestParam("role") final String[] roles);
+    @GetMapping("/authorisation-check")
+    void authorise(@RequestHeader(AUTHORIZATION) String authHeader,
+                   @RequestParam("role") String[] roles);
 
-    @GetMapping(value = "/details")
-    String getServiceName(@RequestHeader(AUTHORIZATION) final String authHeader);
+    @GetMapping("/details")
+    String getServiceName(@RequestHeader(AUTHORIZATION) String authHeader);
 
     class Config {
         @Bean
-        Decoder stringDecoder() {
+        /* default */ Decoder stringDecoder() {
             return new StringDecoder();
         }
     }

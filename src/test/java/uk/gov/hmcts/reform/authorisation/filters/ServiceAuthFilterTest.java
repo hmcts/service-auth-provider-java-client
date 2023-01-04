@@ -23,7 +23,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
+@SuppressWarnings("PMD.LawOfDemeter")
 public class ServiceAuthFilterTest {
+
+    private static final String AUTH_TOKEN = "Bearer @%%$DFGDFGDF";
 
     private static final String SERVICE_1 = "service1";
 
@@ -39,9 +42,7 @@ public class ServiceAuthFilterTest {
 
     private FilterChain filterChain;
 
-    private static String AUTH_TOKEN = "Bearer @%%$DFGDFGDF";
-
-    private List<String> authorisedServices = Arrays.asList(SERVICE_1, SERVICE_2);
+    private final List<String> authorisedServices = Arrays.asList(SERVICE_1, SERVICE_2);
 
 
     @Before

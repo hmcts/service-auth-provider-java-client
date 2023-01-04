@@ -41,8 +41,8 @@ checkstyle {
 }
 
 pmd {
-    toolVersion = "6.12.0"
-    ignoreFailures = true
+    toolVersion = "6.53.0"
+    ignoreFailures = false
     sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest]
     reportsDir = file("$project.buildDir/reports/pmd")
     ruleSetFiles = files("config/pmd/ruleset.xml")
@@ -105,10 +105,8 @@ task contract(type: Test) {
 }
 
 task runAndPublishConsumerPactTests(type: Test){
-    logger.lifecycle("Runs pact Tests")
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
-
 }
 
 runAndPublishConsumerPactTests.dependsOn contract
@@ -136,8 +134,8 @@ publishing {
                 url = gitRepo
                 licenses {
                     license {
-                        name = 'MIT License, Copyright (c) 2019 HM Courts & Tribunals Service'
-                        url = "http://www.opensource.org/licenses/mit-license.php"
+                        name = 'MIT License, Copyright (c) 2023 HM Courts & Tribunals Service'
+                        url = "https://www.opensource.org/licenses/MIT"
                     }
                 }
                 scm {
@@ -158,7 +156,8 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
-    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
+
 
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
