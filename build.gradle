@@ -150,7 +150,7 @@ publishing {
 
 dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.5'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.0'
     implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
     implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.1'
