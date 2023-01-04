@@ -1,4 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabledManagers": ["gradle-wrapper"]
+  "enabledManagers": ["gradle-wrapper"],
+  "labels": ["dependencies"]
 }
