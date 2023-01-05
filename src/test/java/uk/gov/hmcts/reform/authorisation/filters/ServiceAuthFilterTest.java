@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.authorisation.filters;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +15,6 @@ import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
