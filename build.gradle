@@ -154,7 +154,7 @@ dependencies {
 
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
 
 
