@@ -35,7 +35,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
     }
 
     public AutorefreshingJwtAuthTokenGenerator(AuthTokenGenerator generator) {
-        this(generator, Duration.ZERO);
+        this(generator, Duration.ofMinutes(5));
     }
 
     @Override
