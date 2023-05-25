@@ -58,7 +58,7 @@ to approve the request. Any requests from services that are not in your authoris
 to your service and return an HTTP response status code 403 (forbidden) and for any other reasons if the token is
 missing, invalid or failure to verify will result in 401(unauthorized).
 
-## Running without Sprint
+## Running without Spring
 
 You might want to use this client when not running in a spring context, i.e. a scheduled job possibly.
 
