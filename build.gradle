@@ -2,9 +2,10 @@ plugins {
     id 'pmd'
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.1.0'
-    id 'org.springframework.boot' version '3.0.1'
+    id 'org.springframework.boot' version '3.1.0'
     id 'org.owasp.dependencycheck' version '8.2.1'
-    id 'com.github.ben-manes.versions' version '0.44.0'
+    id 'com.github.ben-manes.versions' version '0.46.0'
+    id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'java-library'
     id 'maven-publish'
     id 'au.com.dius.pact' version '4.6.0'
@@ -36,12 +37,12 @@ sourceSets {
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '8.18'
+    toolVersion = '10.12.0'
     configDirectory = new File(rootDir, 'config/checkstyle')
 }
 
 pmd {
-    toolVersion = "6.53.0"
+    toolVersion = "6.55.0"
     ignoreFailures = false
     sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest]
     reportsDir = file("$project.buildDir/reports/pmd")
@@ -85,12 +86,12 @@ task printVersion {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -147,7 +148,7 @@ publishing {
 dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.3'
-    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.3'
     implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
@@ -155,7 +156,7 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.3.1'
 
 
     integrationTestImplementation sourceSets.main.runtimeClasspath
@@ -166,9 +167,9 @@ dependencies {
     contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.0'
     contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.0'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')
+    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.3')
 
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath

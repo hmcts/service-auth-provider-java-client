@@ -43,7 +43,7 @@ import static org.springframework.http.HttpStatus.OK;
 @EnableAutoConfiguration
 @EnableConfigurationProperties()
 @TestPropertySource(properties = {
-        "idam.s2s-authorised.services=service1,service1",
+    "idam.s2s-authorised.services=service1,service1",
 })
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IntegrationTestInitializer.class)
