@@ -1,12 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "enabledManagers": [
-    "gradle-wrapper"
-  ],
-  "labels": [
-    "dependencies"
-  ],
   "extends": [
-    "github>hmcts/.github//renovate/global"
+    "local>hmcts/.github:renovate-config",
+    "local>hmcts/.github//renovate/automerge-all"
   ]
 }
