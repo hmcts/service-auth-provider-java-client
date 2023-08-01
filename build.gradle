@@ -177,7 +177,7 @@ dependencies {
 
 dependencyManagement {
     dependencies {
-        dependency group: 'com.google.guava', name: 'guava', version: '32.1.1-jre'
+        dependency group: 'com.google.guava', name: 'guava', version: '32.1.2-jre'
     }
 }
 
