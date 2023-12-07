@@ -147,7 +147,7 @@ publishing {
 
 dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.4'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.0'
     implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.1'
     implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
@@ -162,7 +162,7 @@ dependencies {
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.0.4'
+    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.1.0'
 
     contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.3'
     contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.3'
