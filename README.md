@@ -1,5 +1,9 @@
 # service-auth-provider-java-client
 
+[![](https://jitpack.io/v/hmcts/service-auth-provider-java-client.svg)](https://jitpack.io/#hmcts/service-auth-provider-java-client)
+[![](https://github.com/hmcts/service-auth-provider-java-client/actions/workflows/gradle.yml/badge.svg)](https://github.com/hmcts/service-auth-provider-java-client/actions/workflows/gradle.yml/)
+
+
 This is the client library for the service-auth-provider api microservice.
 The tool provides a method to generate s2s auth token for a microservice and, optionally, caches it.
 
