@@ -167,9 +167,9 @@ dependencies {
     contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
     contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.10.2')
+    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
+    contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.10.3")
+    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.10.3')
 
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath
