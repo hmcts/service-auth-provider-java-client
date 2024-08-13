@@ -28,6 +28,6 @@ public class ServiceAuthTokenGeneratorTest {
         final String result = serviceAuthTokenGenerator.generate();
 
         //then
-        assertThat(result).isNotNull().isEqualTo(serviceAuthToken);
+        assertThat(result).isEqualTo(serviceAuthToken);
     }
 }
