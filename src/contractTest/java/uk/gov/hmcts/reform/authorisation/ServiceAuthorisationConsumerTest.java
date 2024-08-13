@@ -4,7 +4,7 @@ import au.com.dius.pact.consumer.dsl.PactDslRootValue;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
-import au.com.dius.pact.core.model.RequestResponsePact;
+import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +52,7 @@ public class ServiceAuthorisationConsumerTest {
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public RequestResponsePact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
+    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
 
         return builder.given("microservice with valid credentials")
             .uponReceiving("a request for a token")
@@ -63,11 +63,11 @@ public class ServiceAuthorisationConsumerTest {
             .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
             .status(HttpStatus.OK.value())
             .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
-            .toPact();
+            .toPact(V4Pact.class);
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public RequestResponsePact executeDetails(PactDslWithProvider builder) throws JsonProcessingException {
+    public V4Pact executeDetails(PactDslWithProvider builder) throws JsonProcessingException {
 
         return builder.given("microservice with valid token")
             .uponReceiving("a request to validate details")
@@ -78,7 +78,7 @@ public class ServiceAuthorisationConsumerTest {
             .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
             .status(HttpStatus.OK.value())
             .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
-            .toPact();
+            .toPact(V4Pact.class);
     }
 
     @Test
