@@ -8,7 +8,7 @@ plugins {
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'java-library'
     id 'maven-publish'
-    id 'au.com.dius.pact' version '4.1.11'
+    id 'au.com.dius.pact' version '4.6.13'
 }
 
 def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
@@ -108,6 +108,19 @@ task runAndPublishConsumerPactTests(type: Test){
     classpath = sourceSets.contractTest.runtimeClasspath
 }
 
+project.ext {
+    pactVersion = getCheckedOutGitCommitHash()
+}
+
+pact {
+    publish {
+        pactDirectory = 'pacts'
+        pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
+        tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+        version = project.pactVersion
+    }
+}
+
 runAndPublishConsumerPactTests.dependsOn contract
 
 runAndPublishConsumerPactTests.finalizedBy pactPublish
@@ -164,8 +177,8 @@ dependencies {
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.1.4'
 
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.13'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.13'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.10.3")
     contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.10.3")
@@ -203,23 +216,10 @@ jar {
     archiveClassifier = ''
 }
 
-project.ext {
-    pactVersion = getCheckedOutGitCommitHash()
-}
-
 def getCheckedOutGitCommitHash() {
     'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
 
 tasks.withType(Copy).all {
     duplicatesStrategy DuplicatesStrategy.WARN
-}
-
-pact {
-    publish {
-        pactDirectory = 'pacts'
-        pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
-        tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
-        version = project.pactVersion
-    }
 }
