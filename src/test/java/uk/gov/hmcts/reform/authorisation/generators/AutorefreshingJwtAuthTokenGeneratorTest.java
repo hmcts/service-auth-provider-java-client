@@ -57,7 +57,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
             .willReturn(jwtTokenWithExpDate(now().plus(2, HOURS)));
 
         // when
-        repeat(5, () -> jwtAuthTokenGenerator.generate());
+        repeat(5, jwtAuthTokenGenerator::generate);
 
         // then
         verify(generator, times(1)).generate();
@@ -70,7 +70,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
             .willReturn(jwtTokenWithExpDate(now().minus(2, HOURS)));
 
         // when
-        repeat(3, () -> jwtAuthTokenGenerator.generate());
+        repeat(3, jwtAuthTokenGenerator::generate);
 
         // then
         verify(generator, times(3)).generate();
@@ -83,7 +83,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
             .willReturn("clearly not a valid JWT token");
 
         // when
-        Throwable exc = catchThrowable(() -> jwtAuthTokenGenerator.generate());
+        Throwable exc = catchThrowable(jwtAuthTokenGenerator::generate);
 
         // then
         assertThat(exc)
@@ -112,7 +112,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
         verify(generator, times(2)).generate();
     }
 
-    private String jwtTokenWithExpDate(Instant expAtDate) throws Exception {
+    private String jwtTokenWithExpDate(Instant expAtDate) {
         return JWT
             .create()
             .withExpiresAt(Date.from(expAtDate))
