@@ -169,7 +169,7 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.26.3'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.14.1'
 
 
     integrationTestImplementation sourceSets.main.runtimeClasspath
