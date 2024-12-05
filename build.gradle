@@ -8,7 +8,7 @@ plugins {
     id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'java-library'
     id 'maven-publish'
-    id 'au.com.dius.pact' version '4.6.15'
+    id 'au.com.dius.pact' version '4.6.16'
 }
 
 def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
