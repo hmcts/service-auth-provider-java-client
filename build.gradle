@@ -13,7 +13,7 @@ plugins {
 
 def buildNumber = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
 
-group 'uk.gov.hmcts.reform'
+group 'com.github.hmcts'
 version buildNumber
 
 sourceSets {
@@ -135,6 +135,7 @@ publishing {
     publications {
         Main(MavenPublication) {
             from components.java
+            artifactId 'service-auth-provider-java-client'
 
             artifact sourcesJar
             artifact javadocJar
