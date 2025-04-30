@@ -1,14 +1,25 @@
 # service-auth-provider-java-client
 
-[![](https://jitpack.io/v/hmcts/service-auth-provider-java-client.svg)](https://jitpack.io/#hmcts/service-auth-provider-java-client)
-[![](https://github.com/hmcts/service-auth-provider-java-client/actions/workflows/gradle.yml/badge.svg)](https://github.com/hmcts/service-auth-provider-java-client/actions/workflows/gradle.yml/)
-
-
 This is the client library for the service-auth-provider api microservice.
 The tool provides a method to generate s2s auth token for a microservice and, optionally, caches it.
 
 
 ## Getting started
+
+This library is hosted on Azure DevOps Artifacts and can be used in your project by adding the following to your `build.gradle` file:
+
+```gradle
+repositories {
+    maven {
+        url 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
+    }
+}
+
+dependencies {
+  implementation 'com.github.hmcts:service-auth-provider-java-client:LATEST_TAG'
+}
+```
+
 
 ### Prerequisites
 
