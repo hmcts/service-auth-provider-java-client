@@ -177,24 +177,18 @@ dependencies {
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
 
-
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.17.0'
 
-
-    integrationTestImplementation sourceSets.main.runtimeClasspath
-    integrationTestImplementation sourceSets.test.runtimeClasspath
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.2.1'
+    integrationTestImplementation sourceSets.main.runtimeClasspath
+    integrationTestImplementation sourceSets.test.runtimeClasspath
 
     contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
     contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.12.2")
-    contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.12.2")
-    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.12.2')
-
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath
 }
