@@ -14,8 +14,6 @@ import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 public class ServiceAuthFilter extends OncePerRequestFilter {
 
@@ -35,11 +33,10 @@ public class ServiceAuthFilter extends OncePerRequestFilter {
         }
         this.authorisedServices = authorisedServices.stream()
                 .map(String::toLowerCase)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
-    @SuppressWarnings("PMD.LawOfDemeter")
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {

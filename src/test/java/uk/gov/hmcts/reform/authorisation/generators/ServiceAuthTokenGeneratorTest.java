@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
@@ -8,11 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.when;
 
-public class ServiceAuthTokenGeneratorTest {
+class ServiceAuthTokenGeneratorTest {
     private final ServiceAuthorisationApi serviceAuthorisationApi = Mockito.mock(ServiceAuthorisationApi.class);
 
     @Test
-    public void shouldGenerateServiceAuthToken() {
+    void shouldGenerateServiceAuthToken() {
         //given
         final String secret = "123456";
         final String microService = "microservice";

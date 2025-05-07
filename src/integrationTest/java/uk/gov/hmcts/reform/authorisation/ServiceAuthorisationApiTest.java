@@ -4,9 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,7 +15,7 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.config.IntegrationTestInitializer;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
@@ -45,9 +45,8 @@ import static org.springframework.http.HttpStatus.OK;
 @TestPropertySource(properties = {
     "idam.s2s-authorised.services=service1,service1",
 })
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = IntegrationTestInitializer.class)
-@SuppressWarnings("PMD.ExcessiveImports")
 public class ServiceAuthorisationApiTest {
 
     private static final String DETAILS_ENDPOINT = "/details";
@@ -62,29 +61,29 @@ public class ServiceAuthorisationApiTest {
 
     private HttpServletRequest httpServletRequest;
 
-    @Before
-    public void before() {
+    @BeforeEach
+    public void setup() {
         filterChain = spy(FilterChain.class);
         httpServletRequest = mock(HttpServletRequest.class);
         when(httpServletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn("token");
     }
 
     @Test
-    public void should_get_service_name_providing_valid_token() {
+    public void shouldGetServiceNameProvidingValidToken() {
         AuthTokenValidator validator = new ServiceAuthTokenValidator(s2sApi);
         givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody(DEFAULT_SERVICE)));
         assertThat(validator.getServiceName("token")).isEqualTo(DEFAULT_SERVICE);
     }
 
     @Test
-    public void should_pass_serviceAuthFilter_with_authorized_access() throws ServletException, IOException {
+    public void shouldPassServiceAuthFilterWithAuthorizedAccess() throws ServletException, IOException {
         givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody("service1")));
         serviceAuthFilter.doFilter(httpServletRequest, mock(HttpServletResponse.class), filterChain);
         verify(filterChain, times(1)).doFilter(any(), any());
     }
 
     @Test
-    public void should_fail_serviceAuthFilter_with_Unauthorized_access() throws ServletException, IOException {
+    public void shouldFailServiceAuthFilterWithUnauthorizedAccess() throws ServletException, IOException {
         givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withStatus(HttpStatus.GATEWAY_TIMEOUT_504)));
         HttpServletResponse response = mock(HttpServletResponse.class);
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
@@ -93,7 +92,7 @@ public class ServiceAuthorisationApiTest {
     }
 
     @Test
-    public void should_fail_serviceAuthFilter_with_Forbidden_access() throws ServletException, IOException {
+    public void shouldFailServiceAuthFilterWithForbiddenAccess() throws ServletException, IOException {
         givenThat(get(DETAILS_ENDPOINT).willReturn(status(OK.value()).withBody(DEFAULT_SERVICE)));
         HttpServletResponse response = mock(HttpServletResponse.class);
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);

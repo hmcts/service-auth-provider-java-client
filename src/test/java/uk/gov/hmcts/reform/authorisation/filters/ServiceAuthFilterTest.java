@@ -3,12 +3,12 @@ package uk.gov.hmcts.reform.authorisation.filters;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.exceptions.ServiceException;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 
@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
-@SuppressWarnings("PMD.LawOfDemeter")
-public class ServiceAuthFilterTest {
+@ExtendWith(SpringExtension.class)
+class ServiceAuthFilterTest {
 
     private static final String AUTH_TOKEN = "Bearer @%%$DFGDFGDF";
 
@@ -45,8 +45,8 @@ public class ServiceAuthFilterTest {
     private final List<String> authorisedServices = Arrays.asList(SERVICE_1, SERVICE_2);
 
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         servletRequest = mock(HttpServletRequest.class);
         servletResponse = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
@@ -56,28 +56,28 @@ public class ServiceAuthFilterTest {
     }
 
     @Test
-    public void authorizeValidToken() throws Exception {
+    void authorizeValidToken() throws Exception {
         when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1);
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(authTokenValidator, times(1)).getServiceName(AUTH_TOKEN);
     }
 
     @Test
-    public void failForbiddenAccessServiceAccess() throws Exception {
+    void failForbiddenAccessServiceAccess() throws Exception {
         when(authTokenValidator.getServiceName(anyString())).thenReturn(SERVICE_1 + "fail");
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(servletResponse, times(1)).setStatus(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
-    public void failUnAuthorizedServiceAccessIfServiceIsNull() throws Exception {
+    void failUnAuthorizedServiceAccessIfServiceIsNull() throws Exception {
         when(authTokenValidator.getServiceName(anyString())).thenReturn(null);
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(servletResponse, times(1)).setStatus(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
-    public void failUnAuthorizedServiceAccessIfServiceException() throws Exception {
+    void failUnAuthorizedServiceAccessIfServiceException() throws Exception {
         when(authTokenValidator.getServiceName(anyString()))
                 .thenThrow(new ServiceException("not reachable", new RuntimeException()));
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
@@ -85,17 +85,20 @@ public class ServiceAuthFilterTest {
     }
 
     @Test
-    public void failInvalidBearerToken() throws Exception {
+    void failInvalidBearerToken() throws Exception {
         Mockito.reset(servletRequest);
         when(servletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn(null);
         serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
         verify(servletResponse, times(1)).setStatus(HttpStatus.UNAUTHORIZED.value());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void failIfAuthorisedServicesIsEmpty() throws Exception {
-        serviceAuthFilter = new ServiceAuthFilter(authTokenValidator, new ArrayList<>());
-        serviceAuthFilter.doFilterInternal(servletRequest, servletResponse, filterChain);
+    @Test
+    void failIfAuthorisedServicesIsEmpty() {
+        List<String> emptyServiceList = new ArrayList<>();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                new ServiceAuthFilter(authTokenValidator, emptyServiceList)
+        );
     }
 
 }

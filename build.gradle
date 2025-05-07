@@ -1,63 +1,60 @@
 plugins {
-    id 'pmd'
-    id 'checkstyle'
-    id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.springframework.boot' version '3.4.5'
-    id 'org.owasp.dependencycheck' version '12.1.1'
-    id 'com.github.ben-manes.versions' version '0.52.0'
-    id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'java-library'
     id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'com.github.ben-manes.versions' version '0.52.0'
+    id 'se.patrikerdes.use-latest-versions' version '0.2.18'
     id 'au.com.dius.pact' version '4.6.17'
+    id 'uk.gov.hmcts.java' version '0.12.65'
 }
 
 def buildNumber = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
 
-group 'com.github.hmcts'
-version buildNumber
+group = 'com.github.hmcts'
+version = buildNumber
 
-sourceSets {
-    integrationTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/integrationTest/java')
+def configureSourceSet(String name) {
+    sourceSets.create(name) { sourceSet ->
+        sourceSet.java {
+            compileClasspath += sourceSets.main.output + sourceSets.test.output
+            runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+            srcDir "src/${name}/java"
         }
-        resources.srcDir file('src/integrationTest/resources')
-    }
-    contractTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/contractTest/java')
-        }
-        resources.srcDir file('src/contractTest/resources')
+        sourceSet.resources.srcDir "src/${name}/resources"
     }
 }
 
-checkstyle {
-    maxWarnings = 0
-    toolVersion = '10.21.0'
-    configDirectory = new File(rootDir, 'config/checkstyle')
-}
+['contractTest', 'integrationTest'].each { configureSourceSet(it) }
 
-pmd {
-    toolVersion = "7.6.0"
-    ignoreFailures = false
-    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest]
-    reportsDir = file("$project.buildDir/reports/pmd")
-    ruleSetFiles = files("config/pmd/ruleset.xml")
-}
-
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.2.1'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.6'
+    implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
+    implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
+    implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
+
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+
+    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.2.1'
+    integrationTestImplementation sourceSets.test.runtimeClasspath
+
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
+    contractTestImplementation sourceSets.test.runtimeClasspath
 }
 
 compileJava {
@@ -68,42 +65,56 @@ compileTestJava {
     options.compilerArgs << '-Xlint:deprecation'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 jar {
+    enabled = true
+    archiveClassifier = ''
     manifest {
         attributes 'Implementation-Title': project.name, 'Implementation-Version': project.version
     }
 }
 
-task printVersion {
+tasks.register('printVersion') {
     doLast {
         print project.version
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-task contract(type: Test) {
-    description = 'Runs the consumer Pact tests'
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+tasks.register('integration', Test) {
+    description = 'Runs the integration tests.'
+    group = 'Verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+tasks.register('contract', Test) {
+    description = 'Runs the consumer Pact tests'
+    group = 'Verification'
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
     systemProperty 'pact.rootDir', "pacts"
 }
 
-task runAndPublishConsumerPactTests(type: Test){
+tasks.register('runAndPublishConsumerPactTests', Test) {
+    description = 'Runs the contract tests and publishes pacts to the broker.'
+    group = 'Verification'
+    dependsOn 'contract'
+    finalizedBy 'pactPublish'
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
 }
@@ -120,10 +131,6 @@ pact {
     }
 }
 
-runAndPublishConsumerPactTests.dependsOn contract
-
-runAndPublishConsumerPactTests.finalizedBy pactPublish
-
 artifacts {
     archives sourcesJar
     archives javadocJar
@@ -135,7 +142,7 @@ publishing {
     publications {
         Main(MavenPublication) {
             from components.java
-            artifactId 'service-auth-provider-java-client'
+            artifactId = 'service-auth-provider-java-client'
 
             artifact sourcesJar
             artifact javadocJar
@@ -169,68 +176,18 @@ publishing {
     }
 }
 
-dependencies {
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.2.1'
-    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.6'
-    implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
-    implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.0'
-    implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
-
-
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.17.0'
-
-
-    integrationTestImplementation sourceSets.main.runtimeClasspath
-    integrationTestImplementation sourceSets.test.runtimeClasspath
-    integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.2.1'
-
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
-    contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.12.2")
-    contractTestRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.12.2")
-    contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.12.2')
-
-    contractTestImplementation sourceSets.main.runtimeClasspath
-    contractTestImplementation sourceSets.test.runtimeClasspath
-}
-
-// https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
-    // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-    // range of 0-10 fails the build, anything greater and it doesn't fail the build
-    failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
     suppressionFile = 'config/owasp/suppressions.xml'
-}
-
-dependencyUpdates {
-  def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
-    def regex = /^[0-9,.v-]+$/
-    return !stableKeyword && !(version ==~ regex)
-  }
-  rejectVersionIf { selection -> // <---- notice how the closure argument is named
-    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
-  }
 }
 
 bootJar {
     enabled = false
 }
 
-jar {
-    enabled = true
-    archiveClassifier = ''
-}
-
-def getCheckedOutGitCommitHash() {
+static def getCheckedOutGitCommitHash() {
     'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
 
-tasks.withType(Copy).all {
-    duplicatesStrategy DuplicatesStrategy.WARN
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
