@@ -1,42 +1,43 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class BearerTokenGeneratorTest {
+@ExtendWith(MockitoExtension.class)
+class BearerTokenGeneratorTest {
 
     @Mock
     private AuthTokenGenerator baseGenerator;
 
     private BearerTokenGenerator bearerTokenGenerator;
 
-    @Before
-    public void beforeEachTest() {
+    @BeforeEach
+    void setup() {
         bearerTokenGenerator = new BearerTokenGenerator(baseGenerator);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowNullPointerWhenInitialisedWithNullGenerator() {
-        new BearerTokenGenerator(null);
+    @Test
+    void shouldThrowNullPointerWhenInitialisedWithNullGenerator() {
+        assertThrows(NullPointerException.class, () -> new BearerTokenGenerator(null));
     }
 
     @Test
-    public void shouldPrependBearerToTokenReturnedFromDecoratedGenerator() {
+    void shouldPrependBearerToTokenReturnedFromDecoratedGenerator() {
         String token = "abc123==";
         when(baseGenerator.generate()).thenReturn(token);
         assertThat(bearerTokenGenerator.generate()).isEqualTo(format("Bearer %s", token));
     }
 
     @Test
-    public void shouldNotPrependBearerWhenItIsAlreadyThere() {
+    void shouldNotPrependBearerWhenItIsAlreadyThere() {
         String bearerToken = "Bearer abc123==";
         when(baseGenerator.generate()).thenReturn(bearerToken);
         assertThat(bearerTokenGenerator.generate()).isEqualTo(bearerToken);

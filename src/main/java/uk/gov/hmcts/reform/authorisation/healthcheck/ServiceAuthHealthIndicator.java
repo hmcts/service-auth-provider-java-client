@@ -22,7 +22,7 @@ public class ServiceAuthHealthIndicator implements HealthIndicator {
     public Health health() {
         try {
             InternalHealth internalHealth = this.serviceAuthorisationHealthApi.health();
-            return new Health.Builder(internalHealth.getStatus()).build();
+            return new Health.Builder(internalHealth.status()).build();
         } catch (Exception ex) {
             LOGGER.error("Error on service auth healthcheck", ex);
             return Health.down(ex).build();

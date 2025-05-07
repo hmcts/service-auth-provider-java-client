@@ -12,7 +12,7 @@ public final class AuthTokenGeneratorFactory {
             ServiceAuthorisationApi serviceAuthorisationApi
     ) {
         return new BearerTokenGenerator(
-                new AutorefreshingJwtAuthTokenGenerator(
+                new AutoRefreshingJwtAuthTokenGenerator(
                         new ServiceAuthTokenGenerator(secret, microService, serviceAuthorisationApi)
                 )
         );
@@ -25,7 +25,7 @@ public final class AuthTokenGeneratorFactory {
             Duration refreshTimeDelta
     ) {
         return new BearerTokenGenerator(
-                new AutorefreshingJwtAuthTokenGenerator(
+                new AutoRefreshingJwtAuthTokenGenerator(
                         new ServiceAuthTokenGenerator(secret, microService, serviceAuthorisationApi),
                         refreshTimeDelta
                 )

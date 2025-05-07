@@ -2,10 +2,12 @@ package uk.gov.hmcts.reform.authorisation;
 
 import au.com.dius.pact.consumer.dsl.PactDslRootValue;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit.MockServerConfig;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
-import au.com.dius.pact.core.model.V4Pact;
+import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
+import au.com.dius.pact.core.model.annotations.PactDirectory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +31,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableAutoConfiguration
 @ExtendWith(PactConsumerTestExt.class)
 @ExtendWith(SpringExtension.class)
-@PactTestFor(providerName = "s2s_auth", port = "5050")
+@PactTestFor(providerName = "s2s_auth")
+@MockServerConfig(port = "5050")
+@PactDirectory("src/contractTest/resources/pacts")
 @SpringBootTest(classes = ServiceAuthorisationApi.class)
 public class ServiceAuthorisationConsumerTest {
 
     private static final String AUTHORISATION_TOKEN = "Bearer someAuthorisationToken";
-    public static final String SOME_MICRO_SERVICE_NAME = "someMicroServiceName";
-    public static final String SOME_MICRO_SERVICE_TOKEN = "someMicroServiceToken";
+    private static final String SOME_MICRO_SERVICE_NAME = "someMicroServiceName";
+    private static final String SOME_MICRO_SERVICE_TOKEN = "someMicroServiceToken";
 
     @Autowired
     private ServiceAuthorisationApi serviceAuthorisationApi;
@@ -52,34 +56,33 @@ public class ServiceAuthorisationConsumerTest {
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
-
+    public RequestResponsePact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
         return builder.given("microservice with valid credentials")
-            .uponReceiving("a request for a token")
-            .path("/lease")
-            .method(HttpMethod.POST.toString())
-            .body(buildJsonPayload())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
-            .toPact(V4Pact.class);
+                .uponReceiving("a request for a token")
+                .path("/lease")
+                .method(HttpMethod.POST.toString())
+                .body(buildJsonPayload())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
+                .toPact();
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeDetails(PactDslWithProvider builder) throws JsonProcessingException {
-
+    public RequestResponsePact executeDetails(PactDslWithProvider builder) {
         return builder.given("microservice with valid token")
-            .uponReceiving("a request to validate details")
-            .path("/details")
-            .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
-            .method(HttpMethod.GET.toString())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
-            .toPact(V4Pact.class);
+                .uponReceiving("a request to validate details")
+                .path("/details")
+                .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
+                .method(HttpMethod.GET.toString())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
+                .toPact();
     }
+
 
     @Test
     @PactTestFor(pactMethod = "executeLease")
@@ -87,8 +90,7 @@ public class ServiceAuthorisationConsumerTest {
 
         String token = serviceAuthorisationApi.serviceToken(jsonPayload);
         assertThat(token)
-            .isEqualTo("someMicroServiceToken");
-
+                .isEqualTo(SOME_MICRO_SERVICE_TOKEN);
     }
 
     @Test
@@ -97,7 +99,7 @@ public class ServiceAuthorisationConsumerTest {
 
         String token = serviceAuthorisationApi.getServiceName(AUTHORISATION_TOKEN);
         assertThat(token)
-            .isEqualTo("someMicroServiceName");
+                .isEqualTo(SOME_MICRO_SERVICE_NAME);
     }
 
     private String buildJsonPayload() throws JsonProcessingException {

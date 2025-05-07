@@ -1,11 +1,11 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
 import com.auth0.jwt.JWT;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.authorisation.exceptions.JwtDecodingException;
 
 import java.time.Duration;
@@ -23,20 +23,20 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AutorefreshingJwtAuthTokenGeneratorTest {
+@ExtendWith(MockitoExtension.class)
+class AutoRefreshingJwtAuthTokenGeneratorTest {
 
     @Mock private ServiceAuthTokenGenerator generator;
 
-    private AutorefreshingJwtAuthTokenGenerator jwtAuthTokenGenerator;
+    private AutoRefreshingJwtAuthTokenGenerator jwtAuthTokenGenerator;
 
-    @Before
-    public void setUp() {
-        this.jwtAuthTokenGenerator = new AutorefreshingJwtAuthTokenGenerator(generator);
+    @BeforeEach
+    void setup() {
+        this.jwtAuthTokenGenerator = new AutoRefreshingJwtAuthTokenGenerator(generator);
     }
 
     @Test
-    public void should_request_new_token_on_from_passed_generator_on_first_usage() throws Exception {
+    void should_request_new_token_on_from_passed_generator_on_first_usage() {
         // given
         String tokenFromS2S = jwtTokenWithExpDate(now());
 
@@ -51,7 +51,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_not_request_new_token_if_cached_token_is_still_valid() throws Exception {
+    void should_not_request_new_token_if_cached_token_is_still_valid() {
         // given
         given(generator.generate())
             .willReturn(jwtTokenWithExpDate(now().plus(2, HOURS)));
@@ -64,7 +64,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_request_new_token_once_it_expires() throws Exception {
+    void should_request_new_token_once_it_expires() {
         // given
         given(generator.generate())
             .willReturn(jwtTokenWithExpDate(now().minus(2, HOURS)));
@@ -77,7 +77,7 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_throw_an_exception_if_s2s_token_is_not_a_jwt_token() {
+    void should_throw_an_exception_if_s2s_token_is_not_a_jwt_token() {
         // given
         given(generator.generate())
             .willReturn("clearly not a valid JWT token");
@@ -92,14 +92,14 @@ public class AutorefreshingJwtAuthTokenGeneratorTest {
     }
 
     @Test
-    public void should_request_a_new_token_if_delta_is_larger_than_time_left_to_expiry_date() throws Exception {
+    void should_request_a_new_token_if_delta_is_larger_than_time_left_to_expiry_date() {
         // given
         // retrieved token is valid for one more minute
         given(generator.generate())
             .willReturn(jwtTokenWithExpDate(now().plus(1, MINUTES)));
 
         // but we want to refresh 2 minutes before it expires
-        AutorefreshingJwtAuthTokenGenerator jwtGenerator = new AutorefreshingJwtAuthTokenGenerator(
+        AutoRefreshingJwtAuthTokenGenerator jwtGenerator = new AutoRefreshingJwtAuthTokenGenerator(
             generator,
             Duration.of(2, MINUTES)
         );
