@@ -13,7 +13,7 @@ import static java.time.Instant.now;
 /**
  * Caches the JWT token and refreshes it once it expired.
  */
-public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
+public class AutoRefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
 
     private final AuthTokenGenerator generator;
     private final Duration refreshTimeDelta;
@@ -26,7 +26,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
      * @param generator Token generator for automatic refresh
      * @param refreshTimeDelta Time before actual expiry date in JWT when a new token should be requested.
      */
-    public AutorefreshingJwtAuthTokenGenerator(
+    public AutoRefreshingJwtAuthTokenGenerator(
         AuthTokenGenerator generator,
         Duration refreshTimeDelta
     ) {
@@ -34,7 +34,7 @@ public class AutorefreshingJwtAuthTokenGenerator implements AuthTokenGenerator {
         this.refreshTimeDelta = refreshTimeDelta;
     }
 
-    public AutorefreshingJwtAuthTokenGenerator(AuthTokenGenerator generator) {
+    public AutoRefreshingJwtAuthTokenGenerator(AuthTokenGenerator generator) {
         this(generator, Duration.ofMinutes(5));
     }
 
