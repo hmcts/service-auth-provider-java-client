@@ -28,11 +28,11 @@ class AutoRefreshingJwtAuthTokenGeneratorTest {
 
     @Mock private ServiceAuthTokenGenerator generator;
 
-    private AutorefreshingJwtAuthTokenGenerator jwtAuthTokenGenerator;
+    private AutoRefreshingJwtAuthTokenGenerator jwtAuthTokenGenerator;
 
     @BeforeEach
     void setup() {
-        this.jwtAuthTokenGenerator = new AutorefreshingJwtAuthTokenGenerator(generator);
+        this.jwtAuthTokenGenerator = new AutoRefreshingJwtAuthTokenGenerator(generator);
     }
 
     @Test
@@ -99,7 +99,7 @@ class AutoRefreshingJwtAuthTokenGeneratorTest {
             .willReturn(jwtTokenWithExpDate(now().plus(1, MINUTES)));
 
         // but we want to refresh 2 minutes before it expires
-        AutorefreshingJwtAuthTokenGenerator jwtGenerator = new AutorefreshingJwtAuthTokenGenerator(
+        AutoRefreshingJwtAuthTokenGenerator jwtGenerator = new AutoRefreshingJwtAuthTokenGenerator(
             generator,
             Duration.of(2, MINUTES)
         );
