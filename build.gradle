@@ -10,7 +10,7 @@ plugins {
     id 'au.com.dius.pact' version '4.4.3'
 }
 
-def buildNumber = '4.1.2-testin'
+def buildNumber = '4.1.2'
 
 group 'com.github.hmcts'
 version buildNumber
@@ -232,6 +232,6 @@ pact {
         pactDirectory = 'pacts'
         pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
         tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
-        version = project.pactVersion
+        version = '4.1.2'
     }
 }
