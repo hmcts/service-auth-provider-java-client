@@ -10,9 +10,9 @@ plugins {
     id 'au.com.dius.pact' version '4.4.3'
 }
 
-def buildNumber = '4.1.2-test'
+def buildNumber = '4.1.2-testin'
 
-group 'uk.gov.hmcts.reform'
+group 'com.github.hmcts'
 version buildNumber
 
 sourceSets {
@@ -124,7 +124,7 @@ publishing {
     publications {
         Main(MavenPublication) {
             from components.java
-
+            artifactId 'service-auth-provider-java-client'
             artifact sourcesJar
             artifact javadocJar
 
