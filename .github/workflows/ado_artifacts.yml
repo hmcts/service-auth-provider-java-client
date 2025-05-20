@@ -3,6 +3,8 @@ name: Publish to Azure Artifacts
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "publish-4.1.2"
     tags:
       - '*'
 
