@@ -10,7 +10,7 @@ plugins {
     id 'au.com.dius.pact' version '4.4.3'
 }
 
-def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
+def buildNumber = '4.1.2-test'
 
 group 'uk.gov.hmcts.reform'
 version buildNumber
@@ -142,6 +142,16 @@ publishing {
                     url = gitRepo
                 }
             }
+        }
+    }
+    repositories {
+        maven {
+        name = "AzureArtifacts"
+        url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+        credentials {
+            username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+            password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+        }
         }
     }
 }
