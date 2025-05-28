@@ -3,7 +3,6 @@ plugins {
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
     id 'org.springframework.boot' version '2.0.5.RELEASE'
-    id 'com.jfrog.bintray' version '1.8.4'
     id 'org.owasp.dependencycheck' version '3.3.2'
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'java-library'
@@ -39,13 +38,10 @@ compileTestJava {
 }
 
 repositories {
-    maven {
-        url "https://dl.bintray.com/hmcts/hmcts-maven"
-    }
     jcenter()
     mavenLocal()
     maven {
-        url "https://maven.pkg.github.com/hmcts/service-auth-provider-java-client"
+        url 'https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1'
     }
 }
 
@@ -98,7 +94,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             groupId project.group
-            artifactId 'service-auth-provider-client'
+            artifactId 'service-auth-provider-java-client'
             version project.version
 
             pom.withXml {
@@ -122,23 +118,6 @@ publishing {
     }
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['Main']
-    publish = true
-    pkg {
-        repo = 'hmcts-maven'
-        name = 'service-auth-provider-client'
-        userOrg = 'hmcts'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/hmcts/service-auth-provider-java-client'
-        version {
-            name = project.version
-        }
-    }
-}
-
 ext {
     reformLogging = '4.0.0'
 }
@@ -150,7 +129,7 @@ dependencies {
     compile group: 'com.warrenstrange', name: 'googleauth', version: '1.1.5'
     compile group: 'com.auth0', name: 'java-jwt', version: '3.4.0'
 
-    compile group: 'uk.gov.hmcts.reform', name: 'java-logging', version: reformLogging
+    compile group: 'com.github.hmcts.java-logging', name: 'logging', version: reformLogging
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.10.0'
