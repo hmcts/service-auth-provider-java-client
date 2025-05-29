@@ -11,7 +11,7 @@ plugins {
     id 'au.com.dius.pact' version '4.6.0'
 }
 
-def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "0.0.1-SNAPSHOT"
+def buildNumber = System.getenv("RELEASE_VERSION")?.replace("refs/tags/", "") ?: "DEV-SNAPSHOT"
 
 group 'com.github.hmcts'
 version buildNumber
@@ -127,6 +127,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             artifactId 'service-auth-provider-java-client'
+            version '5.1.0'
 
             pom {
                 name = 'Service auth provider API client'
