@@ -3,7 +3,6 @@ plugins {
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
     id 'org.springframework.boot' version '2.0.5.RELEASE'
-    id 'com.jfrog.bintray' version '1.8.4'
     id 'org.owasp.dependencycheck' version '3.3.2'
     id 'com.github.ben-manes.versions' version '0.20.0'
     id 'java-library'
@@ -12,7 +11,7 @@ plugins {
 }
 
 group 'uk.gov.hmcts.reform'
-version '2.0.1'
+version '2.0.1-rc'
 
 checkstyle {
     maxWarnings = 0
@@ -39,11 +38,11 @@ compileTestJava {
 }
 
 repositories {
-    maven {
-        url "https://dl.bintray.com/hmcts/hmcts-maven"
-    }
-    jcenter()
     mavenLocal()
+    mavenCentral()
+    maven {
+        url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
+    }
 }
 
 jar {
@@ -107,27 +106,20 @@ publishing {
             }
         }
     }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['Main']
-    publish = true
-    pkg {
-        repo = 'hmcts-maven'
-        name = 'service-auth-provider-client'
-        userOrg = 'hmcts'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/hmcts/service-auth-provider-java-client'
-        version {
-            name = project.version
+    repositories {
+        maven {
+            name = "AzureArtifacts"
+            url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+            credentials {
+                username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
+                password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+            }
         }
     }
 }
 
 ext {
-    reformLogging = '4.0.0'
+    reformLogging = '4.0.0-rc'
 }
 
 dependencies {
