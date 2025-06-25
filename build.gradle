@@ -131,7 +131,7 @@ publishing {
 }
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.7.RELEASE'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.6.RELEASE'
     compile group: 'io.github.openfeign', name: 'feign-jackson', version: '10.12'
     compile group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
@@ -146,7 +146,7 @@ dependencies {
 
     integrationTestCompile sourceSets.main.runtimeClasspath
     integrationTestCompile sourceSets.test.runtimeClasspath
-    integrationTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+    integrationTestCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.7.RELEASE'
     integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.2.5.RELEASE'
 }
 
