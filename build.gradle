@@ -127,6 +127,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             artifactId 'service-auth-provider-java-client'
+            version '5.1.2'
 
             pom {
                 name = 'Service auth provider API client'
