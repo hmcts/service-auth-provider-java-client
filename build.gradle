@@ -178,7 +178,7 @@ dependencies {
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.4'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.19.0'
 
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
