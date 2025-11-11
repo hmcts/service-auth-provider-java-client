@@ -186,8 +186,8 @@ dependencies {
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
 
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.18'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.18'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath
