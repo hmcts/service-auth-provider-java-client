@@ -8,7 +8,6 @@ import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,88 +19,78 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@PropertySource(value = "classpath:application.yml")
+@PropertySource("classpath:application.yml")
 @EnableAutoConfiguration
-@ExtendWith(PactConsumerTestExt.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith({PactConsumerTestExt.class, SpringExtension.class})
 @PactTestFor(providerName = "s2s_auth", port = "5050")
 @SpringBootTest(classes = ServiceAuthorisationApi.class)
-public class ServiceAuthorisationConsumerTest {
+class ServiceAuthorisationConsumerTest {
 
     private static final String AUTHORISATION_TOKEN = "Bearer someAuthorisationToken";
-    public static final String SOME_MICRO_SERVICE_NAME = "someMicroServiceName";
-    public static final String SOME_MICRO_SERVICE_TOKEN = "someMicroServiceToken";
+    private static final String MICRO_SERVICE_NAME = "someMicroServiceName";
+    private static final String MICRO_SERVICE_TOKEN = "someMicroServiceToken";
+
+    private static final Map<String, String> JSON_PAYLOAD = Map.of(
+            "microservice", "microserviceName",
+            "oneTimePassword", "784467"
+    );
+
+    private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
 
     @Autowired
     private ServiceAuthorisationApi serviceAuthorisationApi;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    Map<String, String> jsonPayload = new HashMap<>();
-
-    @BeforeEach
-    public void setUpTest() {
-        jsonPayload.put("microservice", "microserviceName");
-        jsonPayload.put("oneTimePassword", "784467");
+    @Pact(consumer = "s2s_auth_client")
+    V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
+        return builder
+                .given("microservice with valid credentials")
+                .uponReceiving("a request for a token")
+                .path("/lease")
+                .method(HttpMethod.POST.name())
+                .body(buildJsonPayload())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(MICRO_SERVICE_TOKEN))
+                .toPact(V4Pact.class);
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
-
-        return builder.given("microservice with valid credentials")
-            .uponReceiving("a request for a token")
-            .path("/lease")
-            .method(HttpMethod.POST.toString())
-            .body(buildJsonPayload())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
-            .toPact(V4Pact.class);
-    }
-
-    @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeDetails(PactDslWithProvider builder) throws JsonProcessingException {
-
-        return builder.given("microservice with valid token")
-            .uponReceiving("a request to validate details")
-            .path("/details")
-            .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
-            .method(HttpMethod.GET.toString())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
-            .toPact(V4Pact.class);
+    V4Pact executeDetails(PactDslWithProvider builder) {
+        return builder
+                .given("microservice with valid token")
+                .uponReceiving("a request to validate details")
+                .path("/details")
+                .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
+                .method(HttpMethod.GET.name())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(MICRO_SERVICE_NAME))
+                .toPact(V4Pact.class);
     }
 
     @Test
     @PactTestFor(pactMethod = "executeLease")
-    void verifyLease() {
+    void shouldGetServiceToken() {
+        String token = serviceAuthorisationApi.serviceToken(JSON_PAYLOAD);
 
-        String token = serviceAuthorisationApi.serviceToken(jsonPayload);
-        assertThat(token)
-            .isEqualTo("someMicroServiceToken");
-
+        assertThat(token).isEqualTo(MICRO_SERVICE_TOKEN);
     }
 
     @Test
     @PactTestFor(pactMethod = "executeDetails")
-    void verifyDetails() {
+    void shouldGetServiceName() {
+        String serviceName = serviceAuthorisationApi.getServiceName(AUTHORISATION_TOKEN);
 
-        String token = serviceAuthorisationApi.getServiceName(AUTHORISATION_TOKEN);
-        assertThat(token)
-            .isEqualTo("someMicroServiceName");
+        assertThat(serviceName).isEqualTo(MICRO_SERVICE_NAME);
     }
 
     private String buildJsonPayload() throws JsonProcessingException {
-
-        return objectMapper.writeValueAsString(jsonPayload);
+        return objectMapper.writeValueAsString(JSON_PAYLOAD);
     }
 }
