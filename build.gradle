@@ -11,10 +11,14 @@ plugins {
     id 'au.com.dius.pact' version '4.6.18'
 }
 
-def buildNumber = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
+group = 'com.github.hmcts'
+version = System.getenv('RELEASE_VERSION') ?: '0.0.1-SNAPSHOT'
 
-group 'com.github.hmcts'
-version buildNumber
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 sourceSets {
     integrationTest {
@@ -25,6 +29,7 @@ sourceSets {
         }
         resources.srcDir file('src/integrationTest/resources')
     }
+
     contractTest {
         java {
             compileClasspath += main.output
@@ -35,38 +40,12 @@ sourceSets {
     }
 }
 
-checkstyle {
-    maxWarnings = 0
-    toolVersion = '11.0.1'
-    configDirectory = new File(rootDir, 'config/checkstyle')
-}
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 
-pmd {
-    toolVersion = "7.6.0"
-    ignoreFailures = false
-    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest]
-    reportsDir = file("$project.buildDir/reports/pmd")
-    ruleSetFiles = files("config/pmd/ruleset.xml")
-}
-
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-    useJUnitPlatform()
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-compileJava {
-    options.compilerArgs << '-parameters' << '-Xlint:deprecation'
-}
-
-compileTestJava {
-    options.compilerArgs << '-Xlint:deprecation'
+    contractTestImplementation.extendsFrom testImplementation
+    contractTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 repositories {
@@ -74,83 +53,144 @@ repositories {
     mavenCentral()
 }
 
+checkstyle {
+    maxWarnings = 0
+    toolVersion = '11.0.1'
+    configDirectory = new File(rootDir, 'config/checkstyle')
+}
+
+pmd {
+    toolVersion = '7.6.0'
+    ignoreFailures = false
+    sourceSets = [
+            sourceSets.main,
+            sourceSets.test,
+            sourceSets.integrationTest,
+            sourceSets.contractTest
+    ]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    ruleSetFiles = files('config/pmd/ruleset.xml')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+tasks.register('integration', Test) {
+    description = 'Runs the integration tests.'
+    group = 'Verification'
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+tasks.register('contract', Test) {
+    description = 'Runs the consumer Pact tests.'
+    group = 'Verification'
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.contractTest.output.classesDirs
+    classpath = sourceSets.contractTest.runtimeClasspath
+    systemProperty 'pact.rootDir', 'pacts'
+}
+
+check.dependsOn tasks.named('contract')
+
 jar {
+    enabled = true
+    archiveClassifier = ''
+
     manifest {
-        attributes 'Implementation-Title': project.name, 'Implementation-Version': project.version
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
     }
 }
 
-task printVersion {
+bootJar {
+    enabled = false
+}
+
+tasks.register('printVersion') {
     doLast {
         print project.version
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-task contract(type: Test) {
-    description = 'Runs the consumer Pact tests'
-    useJUnitPlatform()
-    testClassesDirs = sourceSets.contractTest.output.classesDirs
-    classpath = sourceSets.contractTest.runtimeClasspath
-    systemProperty 'pact.rootDir', "pacts"
-}
-
-task runAndPublishConsumerPactTests(type: Test){
-    testClassesDirs = sourceSets.contractTest.output.classesDirs
-    classpath = sourceSets.contractTest.runtimeClasspath
-}
-
-project.ext {
-    pactVersion = getCheckedOutGitCommitHash()
-}
+def pactBrokerUrlFromEnv = System.getenv('PACT_BROKER_FULL_URL')
+def pactBranchName = System.getenv('PACT_BRANCH_NAME')
+        ?: System.getenv('GITHUB_HEAD_REF')
+        ?: System.getenv('GITHUB_REF_NAME')
+        ?: getCheckedOutGitBranch()
 
 pact {
     publish {
         pactDirectory = 'pacts'
-        pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
-        tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+        pactBrokerUrl = pactBrokerUrlFromEnv ?: 'http://localhost:80'
+        consumerVersion = getCheckedOutGitCommitHash()
+        consumerBranch = pactBranchName
+        tags = [pactBranchName]
     }
 }
 
-runAndPublishConsumerPactTests.dependsOn contract
+pactPublish.dependsOn tasks.named('contract')
 
-runAndPublishConsumerPactTests.finalizedBy pactPublish
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+tasks.register('runAndPublishConsumerPactTests') {
+    description = 'Runs the consumer Pact tests and publishes generated pacts.'
+    group = 'Verification'
+    dependsOn pactPublish
 }
 
-def gitRepo = "https://github.com/hmcts/service-auth-provider-java-client"
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it.name == 'pactPublish' } && !pactBrokerUrlFromEnv) {
+        throw new GradleException('PACT_BROKER_FULL_URL must be set to publish Pact contracts')
+    }
+}
+
+artifacts {
+    archives tasks.named('sourcesJar')
+    archives tasks.named('javadocJar')
+}
+
+def gitRepo = 'https://github.com/hmcts/service-auth-provider-java-client'
 
 publishing {
     publications {
         Main(MavenPublication) {
             from components.java
-            artifactId 'service-auth-provider-java-client'
+            artifactId = 'service-auth-provider-java-client'
 
-            artifact sourcesJar
-            artifact javadocJar
+            artifact tasks.named('sourcesJar')
+            artifact tasks.named('javadocJar')
 
             pom {
                 name = 'Service auth provider API client'
                 description = 'IDAM service auth provider API'
                 url = gitRepo
+
                 licenses {
                     license {
                         name = 'MIT License, Copyright (c) 2023 HM Courts & Tribunals Service'
-                        url = "https://www.opensource.org/licenses/MIT"
+                        url = 'https://www.opensource.org/licenses/MIT'
                     }
                 }
+
                 scm {
                     url = gitRepo
                 }
@@ -160,11 +200,12 @@ publishing {
 
     repositories {
         maven {
-            name = "AzureArtifacts"
-            url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+            name = 'AzureArtifacts'
+            url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
+
             credentials {
-                username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
-                password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+                username = System.getenv('AZURE_DEVOPS_ARTIFACT_USERNAME')
+                password = System.getenv('AZURE_DEVOPS_ARTIFACT_TOKEN')
             }
         }
     }
@@ -193,48 +234,41 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
     integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot:4.0.9'
-    integrationTestImplementation sourceSets.main.runtimeClasspath
-    integrationTestImplementation sourceSets.test.runtimeClasspath
 
     contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.6.18'
-    contractTestImplementation sourceSets.main.runtimeClasspath
-    contractTestImplementation sourceSets.test.runtimeClasspath
 }
 
-// https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
     // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-    // range of 0-10 fails the build, anything greater and it doesn't fail the build
+    // Range of 0-10 fails the build, anything greater does not fail it.
     failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
     suppressionFile = 'config/owasp/suppressions.xml'
 }
 
 dependencyUpdates {
-  def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
-    def regex = /^[0-9,.v-]+$/
-    return !stableKeyword && !(version ==~ regex)
-  }
-  rejectVersionIf { selection -> // <---- notice how the closure argument is named
-    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
-  }
+    def isNonStable = { String version ->
+        def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier ->
+            version.toUpperCase().contains(qualifier)
+        }
+        def regex = /^[0-9,.v-]+$/
+
+        return !stableKeyword && !(version ==~ regex)
+    }
+
+    rejectVersionIf { selection ->
+        return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
+    }
 }
 
-bootJar {
-    enabled = false
-}
-
-jar {
-    enabled = true
-    archiveClassifier = ''
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 def getCheckedOutGitCommitHash() {
     'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
 
-tasks.withType(Copy).all {
-    duplicatesStrategy DuplicatesStrategy.WARN
+def getCheckedOutGitBranch() {
+    'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
 }
