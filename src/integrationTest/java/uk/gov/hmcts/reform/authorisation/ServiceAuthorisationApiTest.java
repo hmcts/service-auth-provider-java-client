@@ -22,8 +22,8 @@ import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -35,10 +35,10 @@ import static org.mockito.Mockito.when;
 
 @ActiveProfiles("wiremock")
 @EnableWireMock({
-        @ConfigureWireMock(
-                name = "s2s",
-                baseUrlProperties = "idam.s2s-auth.url"
-        )
+    @ConfigureWireMock(
+        name = "s2s",
+        baseUrlProperties = "idam.s2s-auth.url"
+    )
 })
 @SpringBootTest(classes = IntegrationTestInitializer.class)
 class ServiceAuthorisationApiTest {
