@@ -1,13 +1,12 @@
 package uk.gov.hmcts.reform.authorisation.config;
 
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Import;
+import uk.gov.hmcts.reform.authorisation.ServiceAuthAutoConfiguration;
 
-@Configuration
-public class IntegrationTestInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-    @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
-    }
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@Import(ServiceAuthAutoConfiguration.class)
+public class IntegrationTestInitializer {
 }
