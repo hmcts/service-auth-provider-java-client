@@ -3,12 +3,12 @@ plugins {
     id 'checkstyle'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.springframework.boot' version '4.0.6'
-    id 'org.owasp.dependencycheck' version '12.1.3'
-    id 'com.github.ben-manes.versions' version '0.52.0'
+    id 'org.owasp.dependencycheck' version '12.2.2'
+    id 'com.github.ben-manes.versions' version '0.54.0'
     id 'se.patrikerdes.use-latest-versions' version '0.2.19'
     id 'java-library'
     id 'maven-publish'
-    id 'au.com.dius.pact' version '4.6.18'
+    id 'au.com.dius.pact' version '4.7.1'
 }
 
 group = 'com.github.hmcts'
@@ -55,7 +55,7 @@ repositories {
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '11.0.1'
+    toolVersion = '11.1.0'
     configDirectory = new File(rootDir, 'config/checkstyle')
 }
 
@@ -133,19 +133,12 @@ tasks.register('javadocJar', Jar) {
     from javadoc.destinationDir
 }
 
-def pactBrokerUrlFromEnv = System.getenv('PACT_BROKER_FULL_URL')
-def pactBranchName = System.getenv('PACT_BRANCH_NAME')
-        ?: System.getenv('GITHUB_HEAD_REF')
-        ?: System.getenv('GITHUB_REF_NAME')
-        ?: getCheckedOutGitBranch()
-
 pact {
     publish {
         pactDirectory = 'pacts'
-        pactBrokerUrl = pactBrokerUrlFromEnv ?: 'http://localhost:80'
+        pactBrokerUrl = System.getenv('PACT_BROKER_FULL_URL') ?: 'http://localhost:80'
         consumerVersion = getCheckedOutGitCommitHash()
-        consumerBranch = pactBranchName
-        tags = [pactBranchName]
+        tags = [System.getenv('PACT_BRANCH_NAME') ?: 'Dev']
     }
 }
 
@@ -155,12 +148,6 @@ tasks.register('runAndPublishConsumerPactTests') {
     description = 'Runs the consumer Pact tests and publishes generated pacts.'
     group = 'Verification'
     dependsOn pactPublish
-}
-
-gradle.taskGraph.whenReady { taskGraph ->
-    if (taskGraph.allTasks.any { it.name == 'pactPublish' } && !pactBrokerUrlFromEnv) {
-        throw new GradleException('PACT_BROKER_FULL_URL must be set to publish Pact contracts')
-    }
 }
 
 artifacts {
@@ -234,9 +221,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot:4.0.9'
+    integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot:4.2.1'
 
-    contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.6.18'
+    contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.7.1'
 }
 
 dependencyCheck {
@@ -267,8 +254,4 @@ tasks.withType(Copy).configureEach {
 
 def getCheckedOutGitCommitHash() {
     'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
-def getCheckedOutGitBranch() {
-    'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
 }
