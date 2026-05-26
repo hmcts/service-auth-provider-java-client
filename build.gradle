@@ -181,7 +181,7 @@ dependencies {
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.0'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.19.0'
 
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
@@ -189,8 +189,8 @@ dependencies {
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
 
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
+    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
+    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
     contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath
