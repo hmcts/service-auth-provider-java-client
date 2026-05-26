@@ -95,17 +95,20 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-task contract(type: Test) {
+tasks.register('contract', Test) {
     description = 'Runs the consumer Pact tests'
+    group = 'Verification'
     useJUnitPlatform()
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
     systemProperty 'pact.rootDir', "pacts"
 }
 
-task runAndPublishConsumerPactTests(type: Test){
-    testClassesDirs = sourceSets.contractTest.output.classesDirs
-    classpath = sourceSets.contractTest.runtimeClasspath
+tasks.register('runAndPublishConsumerPactTests') {
+    description = 'Runs and publishes the consumer Pact tests'
+    group = 'Verification'
+    dependsOn contract
+    finalizedBy pactPublish
 }
 
 project.ext {
