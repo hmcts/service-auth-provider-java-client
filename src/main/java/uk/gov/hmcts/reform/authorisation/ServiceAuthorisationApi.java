@@ -28,7 +28,6 @@ public interface ServiceAuthorisationApi {
             produces = TEXT_PLAIN_VALUE)
     String serviceToken(@RequestBody Map<String, String> signIn);
 
-    @SuppressWarnings("PMD.UseVarargs")
     @GetMapping("/authorisation-check")
     void authorise(@RequestHeader(AUTHORIZATION) String authHeader,
                    @RequestParam("role") String[] roles);
