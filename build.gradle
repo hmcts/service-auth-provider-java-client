@@ -37,7 +37,7 @@ sourceSets {
 
 checkstyle {
     maxWarnings = 0
-    toolVersion = '11.1.0'
+    toolVersion = '13.4.2'
     configDirectory = new File(rootDir, 'config/checkstyle')
 }
 
