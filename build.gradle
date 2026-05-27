@@ -182,7 +182,7 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.19.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.23.0'
 
     integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.3.3'
