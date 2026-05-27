@@ -11,10 +11,17 @@ plugins {
     id 'au.com.dius.pact' version '4.7.1'
 }
 
-def buildNumber = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
-
 group 'com.github.hmcts'
-version buildNumber
+version = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+
+    withSourcesJar()
+    withJavadocJar()
+}
 
 sourceSets {
     integrationTest {
@@ -49,17 +56,6 @@ pmd {
     ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
 compileJava {
     options.compilerArgs << '-parameters' << '-Xlint:deprecation'
 }
@@ -79,36 +75,30 @@ jar {
     }
 }
 
-task printVersion {
-    doLast {
-        print project.version
-    }
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier = 'javadoc'
-    from javadoc.destinationDir
+tasks.register('integration', Test) {
+    description = 'Runs the integration tests.'
+    group = 'Verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 tasks.register('contract', Test) {
     description = 'Runs the consumer Pact tests'
     group = 'Verification'
-    useJUnitPlatform()
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
-    systemProperty 'pact.rootDir', "pacts"
+    systemProperty 'pact.rootDir', 'pacts'
 }
 
 tasks.register('runAndPublishConsumerPactTests') {
     description = 'Runs and publishes the consumer Pact tests'
     group = 'Verification'
-    dependsOn contract
-    finalizedBy pactPublish
+    dependsOn tasks.named('contract')
+    finalizedBy tasks.named('pactPublish')
 }
 
 project.ext {
@@ -122,10 +112,6 @@ pact {
         tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
     }
 }
-
-runAndPublishConsumerPactTests.dependsOn contract
-
-runAndPublishConsumerPactTests.finalizedBy pactPublish
 
 artifacts {
     archives sourcesJar
@@ -180,18 +166,16 @@ dependencies {
     implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.2'
     implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
 
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.19.0'
 
-    integrationTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.3.3'
     integrationTestImplementation sourceSets.main.runtimeClasspath
     integrationTestImplementation sourceSets.test.runtimeClasspath
 
     contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
     contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
-    contractTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
     contractTestImplementation sourceSets.main.runtimeClasspath
     contractTestImplementation sourceSets.test.runtimeClasspath
 }
