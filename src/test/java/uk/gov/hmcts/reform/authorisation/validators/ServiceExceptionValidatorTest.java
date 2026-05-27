@@ -13,7 +13,6 @@ import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,14 +28,12 @@ public class ServiceExceptionValidatorTest {
 
     private final HttpStatus status;
 
-    @Parameterized.Parameters(name = "Testing for HTTP_STATUS {1}")
+    @Parameterized.Parameters(name = "Testing for HTTP_STATUS {0}")
     public static Iterable<Object[]> data() {
         return Arrays.stream(HttpStatus.values())
                 .filter(httpStatus -> httpStatus.is4xxClientError() || httpStatus.is5xxServerError())
-                .flatMap(httpStatus -> Arrays.stream(new Object[][]{
-                        {httpStatus}
-                }))
-                .collect(Collectors.toList());
+                .map(httpStatus -> new Object[] { httpStatus })
+                .toList();
     }
 
     public ServiceExceptionValidatorTest(HttpStatus status) {
