@@ -4,70 +4,61 @@ import feign.FeignException;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Response;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
-@RunWith(Parameterized.class)
-public class ServiceExceptionValidatorTest {
+class ServiceExceptionValidatorTest {
 
     private final ServiceAuthorisationApi api = mock(ServiceAuthorisationApi.class);
-
     private final ServiceAuthTokenValidator validator = new ServiceAuthTokenValidator(api);
-
-    private final HttpStatus status;
-
-    @Parameterized.Parameters(name = "Testing for HTTP_STATUS {1}")
-    public static Iterable<Object[]> data() {
+    private static final String INVALID_TOKEN = "some-invalid-token";
+    
+    static Stream<HttpStatus> errorStatuses() {
         return Arrays.stream(HttpStatus.values())
-                .filter(httpStatus -> httpStatus.is4xxClientError() || httpStatus.is5xxServerError())
-                .flatMap(httpStatus -> Arrays.stream(new Object[][]{
-                        {httpStatus}
-                }))
-                .collect(Collectors.toList());
+                .filter(httpStatus -> httpStatus.is4xxClientError() || httpStatus.is5xxServerError());
     }
 
-    public ServiceExceptionValidatorTest(HttpStatus status) {
-        this.status = status;
-    }
-
-    @Before
-    @SuppressWarnings({"PMD.LawOfDemeter", "PMD.DataflowAnomalyAnalysis"})
-    public void setUp() {
+    @ParameterizedTest(name = "Testing for HTTP_STATUS {0}")
+    @MethodSource("errorStatuses")
+    void checkExceptions(HttpStatus status) {
         Request request = Request.create(
                 Request.HttpMethod.GET,
                 "/test",
-                Collections.emptyMap(),
+                Map.of(),
                 Request.Body.empty(),
                 new RequestTemplate()
         );
-        try (Response feignResponse = Response
-                .builder()
+
+        try (Response feignResponse = Response.builder()
                 .request(request)
                 .status(status.value())
                 .body(new byte[0])
                 .reason("i must fail")
-                .headers(Collections.emptyMap())
+                .headers(Map.of())
                 .build()) {
-            FeignException exception = FeignException.errorStatus("oh no", feignResponse);
-            doThrow(exception).when(api).authorise(anyString(), eq(new String[0]));
-        }
-    }
 
-    @Test(expected =  RuntimeException.class)
-    public void checkExceptions() {
-        validator.validate("some-invalid-token");
+            FeignException exception = FeignException.errorStatus("oh no", feignResponse);
+
+            doThrow(exception)
+                    .when(api)
+                    .authorise(anyString(), eq(new String[0]));
+
+            assertThrows(
+                    RuntimeException.class,
+                    () -> validator.validate(INVALID_TOKEN)
+            );
+        }
     }
 }

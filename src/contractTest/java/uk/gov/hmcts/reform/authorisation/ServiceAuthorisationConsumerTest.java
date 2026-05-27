@@ -18,46 +18,44 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@PropertySource(value = "classpath:application.yml")
+@PropertySource("classpath:application.yml")
 @EnableAutoConfiguration
 @ExtendWith(PactConsumerTestExt.class)
-@ExtendWith(SpringExtension.class)
 @PactTestFor(providerName = "s2s_auth", port = "5050")
 @SpringBootTest(classes = ServiceAuthorisationApi.class)
-public class ServiceAuthorisationConsumerTest {
+class ServiceAuthorisationConsumerTest {
 
     private static final String AUTHORISATION_TOKEN = "Bearer someAuthorisationToken";
-    public static final String SOME_MICRO_SERVICE_NAME = "someMicroServiceName";
-    public static final String SOME_MICRO_SERVICE_TOKEN = "someMicroServiceToken";
+    private static final String SOME_MICRO_SERVICE_NAME = "someMicroServiceName";
+    private static final String SOME_MICRO_SERVICE_TOKEN = "someMicroServiceToken";
 
     @Autowired
     private ServiceAuthorisationApi serviceAuthorisationApi;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
-    Map<String, String> jsonPayload = new HashMap<>();
+    private final Map<String, String> jsonPayload = new HashMap<>();
 
     @BeforeEach
-    public void setUpTest() {
+    void setUpTest() {
+        jsonPayload.clear();
         jsonPayload.put("microservice", "microserviceName");
         jsonPayload.put("oneTimePassword", "784467");
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
-
+    V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
         return builder.given("microservice with valid credentials")
             .uponReceiving("a request for a token")
             .path("/lease")
-            .method(HttpMethod.POST.toString())
+            .method(HttpMethod.POST.name())
             .body(buildJsonPayload())
             .willRespondWith()
             .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
@@ -67,13 +65,12 @@ public class ServiceAuthorisationConsumerTest {
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeDetails(PactDslWithProvider builder) throws JsonProcessingException {
-
+    V4Pact executeDetails(PactDslWithProvider builder) {
         return builder.given("microservice with valid token")
             .uponReceiving("a request to validate details")
             .path("/details")
             .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
-            .method(HttpMethod.GET.toString())
+            .method(HttpMethod.GET.name())
             .willRespondWith()
             .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
             .status(HttpStatus.OK.value())
@@ -84,24 +81,20 @@ public class ServiceAuthorisationConsumerTest {
     @Test
     @PactTestFor(pactMethod = "executeLease")
     void verifyLease() {
-
         String token = serviceAuthorisationApi.serviceToken(jsonPayload);
-        assertThat(token)
-            .isEqualTo("someMicroServiceToken");
 
+        assertEquals(SOME_MICRO_SERVICE_TOKEN, token);
     }
 
     @Test
     @PactTestFor(pactMethod = "executeDetails")
     void verifyDetails() {
+        String serviceName = serviceAuthorisationApi.getServiceName(AUTHORISATION_TOKEN);
 
-        String token = serviceAuthorisationApi.getServiceName(AUTHORISATION_TOKEN);
-        assertThat(token)
-            .isEqualTo("someMicroServiceName");
+        assertEquals(SOME_MICRO_SERVICE_NAME, serviceName);
     }
 
     private String buildJsonPayload() throws JsonProcessingException {
-
         return objectMapper.writeValueAsString(jsonPayload);
     }
 }
