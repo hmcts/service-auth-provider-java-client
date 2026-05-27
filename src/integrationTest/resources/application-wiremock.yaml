@@ -4,7 +4,3 @@ wiremock:
 idam:
   s2s-auth:
     url: *wiremock
-  s2s-authorised:
-    services:
-      - service1
-      - service2
