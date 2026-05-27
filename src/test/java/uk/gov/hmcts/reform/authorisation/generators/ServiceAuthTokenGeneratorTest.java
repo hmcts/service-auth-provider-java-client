@@ -1,33 +1,42 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ServiceAuthTokenGeneratorTest {
-    private final ServiceAuthorisationApi serviceAuthorisationApi = Mockito.mock(ServiceAuthorisationApi.class);
+class ServiceAuthTokenGeneratorTest {
+
+    private final ServiceAuthorisationApi serviceAuthorisationApi = mock(ServiceAuthorisationApi.class);
 
     @Test
-    public void shouldGenerateServiceAuthToken() {
-        //given
-        final String secret = "123456";
-        final String microService = "microservice";
-        final String serviceAuthToken = "service-auth-token";
+    void shouldGenerateServiceAuthToken() {
+        String secret = "123456";
+        String microService = "microservice";
+        String serviceAuthToken = "service-auth-token";
 
         when(serviceAuthorisationApi.serviceToken(anyMap()))
             .thenReturn(serviceAuthToken);
 
-        //when
-        final ServiceAuthTokenGenerator serviceAuthTokenGenerator = new ServiceAuthTokenGenerator(secret,
-            microService, serviceAuthorisationApi);
+        ServiceAuthTokenGenerator serviceAuthTokenGenerator = new ServiceAuthTokenGenerator(
+            secret,
+            microService,
+            serviceAuthorisationApi
+        );
 
-        final String result = serviceAuthTokenGenerator.generate();
+        String result = serviceAuthTokenGenerator.generate();
 
-        //then
-        assertThat(result).isEqualTo(serviceAuthToken);
+        assertEquals(serviceAuthToken, result);
+        verify(serviceAuthorisationApi).serviceToken(argThat(payload ->
+            microService.equals(payload.get("microservice"))
+                && payload.containsKey("oneTimePassword")
+                && payload.get("oneTimePassword") != null
+                && payload.get("oneTimePassword").matches("\\d{6}")
+        ));
     }
 }
