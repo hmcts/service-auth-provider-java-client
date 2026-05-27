@@ -1,18 +1,19 @@
 plugins {
-    id 'pmd'
-    id 'checkstyle'
+    id 'java-library'
+    id 'maven-publish'
+    id 'uk.gov.hmcts.java' version '0.12.70'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.springframework.boot' version '3.5.4'
     id 'org.owasp.dependencycheck' version '12.2.2'
     id 'com.github.ben-manes.versions' version '0.52.0'
     id 'se.patrikerdes.use-latest-versions' version '0.2.19'
-    id 'java-library'
-    id 'maven-publish'
     id 'au.com.dius.pact' version '4.7.1'
 }
 
-group 'com.github.hmcts'
-version = System.getenv("RELEASE_VERSION")?: "0.0.1-SNAPSHOT"
+group = 'com.github.hmcts'
+version = System.getenv('RELEASE_VERSION') ?: '0.0.1-SNAPSHOT'
+
+def gitRepo = 'https://github.com/hmcts/service-auth-provider-java-client'
 
 java {
     toolchain {
@@ -25,43 +26,22 @@ java {
 
 sourceSets {
     integrationTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/integrationTest/java')
-        }
-        resources.srcDir file('src/integrationTest/resources')
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
     }
+
     contractTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/contractTest/java')
-        }
-        resources.srcDir file('src/contractTest/resources')
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
     }
 }
 
-checkstyle {
-    maxWarnings = 0
-    toolVersion = '11.1.0'
-    configDirectory = new File(rootDir, 'config/checkstyle')
-}
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 
-pmd {
-    toolVersion = "7.6.0"
-    ignoreFailures = false
-    sourceSets = [sourceSets.main, sourceSets.test, sourceSets.integrationTest]
-    reportsDir = file("$project.buildDir/reports/pmd")
-    ruleSetFiles = files("config/pmd/ruleset.xml")
-}
-
-compileJava {
-    options.compilerArgs << '-parameters' << '-Xlint:deprecation'
-}
-
-compileTestJava {
-    options.compilerArgs << '-Xlint:deprecation'
+    contractTestImplementation.extendsFrom testImplementation
+    contractTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 repositories {
@@ -69,14 +49,27 @@ repositories {
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes 'Implementation-Title': project.name, 'Implementation-Version': project.version
-    }
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-parameters' << '-Xlint:deprecation'
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+}
+
+bootJar {
+    enabled = false
 }
 
 tasks.register('integration', Test) {
@@ -87,15 +80,20 @@ tasks.register('integration', Test) {
 }
 
 tasks.register('contract', Test) {
-    description = 'Runs the consumer Pact tests'
+    description = 'Runs the consumer Pact tests.'
     group = 'Verification'
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
     systemProperty 'pact.rootDir', 'pacts'
 }
 
+tasks.named('check') {
+    dependsOn tasks.named('integration')
+    dependsOn tasks.named('contract')
+}
+
 tasks.register('runAndPublishConsumerPactTests') {
-    description = 'Runs and publishes the consumer Pact tests'
+    description = 'Runs and publishes the consumer Pact tests.'
     group = 'Verification'
     dependsOn tasks.named('contract')
     finalizedBy tasks.named('pactPublish')
@@ -108,37 +106,29 @@ project.ext {
 pact {
     publish {
         pactDirectory = 'pacts'
-        pactBrokerUrl = System.getenv("PACT_BROKER_FULL_URL") ?: 'http://localhost:80'
-        tags = [System.getenv("PACT_BRANCH_NAME") ?:'Dev']
+        pactBrokerUrl = System.getenv('PACT_BROKER_FULL_URL') ?: 'http://localhost:80'
+        tags = [System.getenv('PACT_BRANCH_NAME') ?: 'Dev']
     }
 }
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-def gitRepo = "https://github.com/hmcts/service-auth-provider-java-client"
 
 publishing {
     publications {
         Main(MavenPublication) {
             from components.java
-            artifactId 'service-auth-provider-java-client'
-
-            artifact sourcesJar
-            artifact javadocJar
+            artifactId = 'service-auth-provider-java-client'
 
             pom {
                 name = 'Service auth provider API client'
                 description = 'IDAM service auth provider API'
                 url = gitRepo
+
                 licenses {
                     license {
                         name = 'MIT License, Copyright (c) 2023 HM Courts & Tribunals Service'
-                        url = "https://www.opensource.org/licenses/MIT"
+                        url = 'https://www.opensource.org/licenses/MIT'
                     }
                 }
+
                 scm {
                     url = gitRepo
                 }
@@ -148,70 +138,51 @@ publishing {
 
     repositories {
         maven {
-            name = "AzureArtifacts"
-            url = uri("https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1")
+            name = 'AzureArtifacts'
+            url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
             credentials {
-                username = System.getenv("AZURE_DEVOPS_ARTIFACT_USERNAME")
-                password = System.getenv("AZURE_DEVOPS_ARTIFACT_TOKEN")
+                username = System.getenv('AZURE_DEVOPS_ARTIFACT_USERNAME')
+                password = System.getenv('AZURE_DEVOPS_ARTIFACT_TOKEN')
             }
         }
     }
 }
 
 dependencies {
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.3.2'
-    implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.12'
-    implementation group: 'com.warrenstrange', name: 'googleauth', version: '1.5.0'
-    implementation group: 'com.auth0', name: 'java-jwt', version: '4.5.2'
-    implementation group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.2'
+    implementation 'io.github.openfeign:feign-jackson:13.12'
+    implementation 'com.warrenstrange:googleauth:1.5.0'
+    implementation 'com.auth0:java-jwt:4.5.2'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
-    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.27.7'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.19.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.3.3'
-    integrationTestImplementation sourceSets.main.runtimeClasspath
-    integrationTestImplementation sourceSets.test.runtimeClasspath
+    integrationTestImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.3.3'
 
-    contractTestImplementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
-    contractTestRuntimeOnly group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.7.1'
-    contractTestImplementation sourceSets.main.runtimeClasspath
-    contractTestImplementation sourceSets.test.runtimeClasspath
+    contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.7.1'
 }
 
-// https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
-    // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-    // range of 0-10 fails the build, anything greater and it doesn't fail the build
     failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
     suppressionFile = 'config/owasp/suppressions.xml'
 }
 
 dependencyUpdates {
-  def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
-    def regex = /^[0-9,.v-]+$/
-    return !stableKeyword && !(version ==~ regex)
-  }
-  rejectVersionIf { selection -> // <---- notice how the closure argument is named
-    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
-  }
-}
+    def isNonStable = { String version ->
+        def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier ->
+            version.toUpperCase().contains(qualifier)
+        }
+        def regex = /^[0-9,.v-]+$/
 
-bootJar {
-    enabled = false
-}
+        !stableKeyword && !(version ==~ regex)
+    }
 
-jar {
-    enabled = true
-    archiveClassifier = ''
+    rejectVersionIf { selection ->
+        isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
+    }
 }
 
 def getCheckedOutGitCommitHash() {
     'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
-tasks.withType(Copy).all {
-    duplicatesStrategy DuplicatesStrategy.WARN
 }
