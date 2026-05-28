@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'uk.gov.hmcts.java' version '0.12.70'
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.springframework.boot' version '3.5.14'
+    id 'org.springframework.boot' version '4.0.6'
     id 'org.owasp.dependencycheck' version '12.2.2'
     id 'com.github.ben-manes.versions' version '0.54.0'
     id 'se.patrikerdes.use-latest-versions' version '0.2.19'
@@ -149,16 +149,20 @@ publishing {
 }
 
 dependencies {
+    implementation platform('org.springframework.cloud:spring-cloud-dependencies:2025.1.1')
+
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.2'
-    implementation 'io.github.openfeign:feign-jackson:13.12'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'io.github.openfeign:feign-jackson'
     implementation 'com.warrenstrange:googleauth:1.5.0'
     implementation 'com.auth0:java-jwt:4.5.2'
-    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+    compileOnly 'jakarta.servlet:jakarta.servlet-api'
+    testImplementation 'jakarta.servlet:jakarta.servlet-api'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    integrationTestImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.3.3'
+    integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot-standalone:4.2.0'
 
     contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.7.1'
 }
