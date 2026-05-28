@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.wiremock.spring.ConfigureWireMock;
 import uk.gov.hmcts.reform.authorisation.filters.ServiceAuthFilter;
 import uk.gov.hmcts.reform.authorisation.validators.AuthTokenValidator;
 import uk.gov.hmcts.reform.authorisation.validators.ServiceAuthTokenValidator;
@@ -32,12 +32,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("wiremock")
-@AutoConfigureWireMock(port = 0)
+@ConfigureWireMock(
+    name = "s2s",
+    port = 0,
+    portProperties = "wiremock.server.port",
+    baseUrlProperties = "idam.s2s-auth.url"
+    )
 @ComponentScan
 @EnableAutoConfiguration
 @EnableConfigurationProperties
@@ -64,6 +68,7 @@ class ServiceAuthorisationApiTest {
     void before() {
         filterChain = spy(FilterChain.class);
         httpServletRequest = mock(HttpServletRequest.class);
+
         when(httpServletRequest.getHeader(ServiceAuthFilter.AUTHORISATION)).thenReturn("token");
     }
 
@@ -84,7 +89,7 @@ class ServiceAuthorisationApiTest {
 
         serviceAuthFilter.doFilter(httpServletRequest, mock(HttpServletResponse.class), filterChain);
 
-        verify(filterChain, times(1)).doFilter(any(), any());
+        verify(filterChain).doFilter(any(), any());
     }
 
     @Test
@@ -96,7 +101,7 @@ class ServiceAuthorisationApiTest {
 
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
 
-        verify(response, times(1)).setStatus(SC_UNAUTHORIZED);
+        verify(response).setStatus(SC_UNAUTHORIZED);
         verify(filterChain, never()).doFilter(any(), any());
     }
 
@@ -109,7 +114,7 @@ class ServiceAuthorisationApiTest {
 
         serviceAuthFilter.doFilter(httpServletRequest, response, filterChain);
 
-        verify(response, times(1)).setStatus(SC_FORBIDDEN);
+        verify(response).setStatus(SC_FORBIDDEN);
         verify(filterChain, never()).doFilter(any(), any());
     }
 }
