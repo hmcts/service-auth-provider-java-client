@@ -1,11 +1,8 @@
 package uk.gov.hmcts.reform.authorisation.generators;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 
 import java.util.Map;
-
-import static java.lang.String.format;
 
 @SuppressWarnings("SummaryJavadoc")
 public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
@@ -13,7 +10,6 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
     private final String secret;
     private final String microService;
     private final ServiceAuthorisationApi serviceAuthorisationApi;
-    private final GoogleAuthenticator googleAuthenticator;
 
     public ServiceAuthTokenGenerator(
         final String secret,
@@ -23,12 +19,11 @@ public class ServiceAuthTokenGenerator implements AuthTokenGenerator {
         this.secret = secret;
         this.microService = microService;
         this.serviceAuthorisationApi = serviceAuthorisationApi;
-        this.googleAuthenticator = new GoogleAuthenticator();
     }
 
     @Override
     public String generate() {
-        final String oneTimePassword = format("%06d", googleAuthenticator.getTotpPassword(secret));
+        final String oneTimePassword = TotpGenerator.generate(secret);
 
         Map<String, String> signInDetails = Map.of(
                 "microservice", this.microService,
