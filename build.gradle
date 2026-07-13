@@ -155,7 +155,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'io.github.openfeign:feign-jackson'
     implementation 'com.warrenstrange:googleauth:1.5.0'
-    implementation 'com.auth0:java-jwt:4.5.2'
+    implementation 'com.auth0:java-jwt:4.6.0'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api'
     testImplementation 'jakarta.servlet:jakarta.servlet-api'
