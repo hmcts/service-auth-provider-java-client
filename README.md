@@ -23,7 +23,7 @@ dependencies {
 
 ### Prerequisites
 
-- [Java 17](https://adoptium.net/)
+- [Java 25](https://adoptium.net/)
 - [Docker](https://www.docker.com)
 
 ### Building
