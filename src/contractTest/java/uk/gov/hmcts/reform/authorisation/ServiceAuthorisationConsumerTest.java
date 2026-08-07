@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
         classes = ServiceAuthorisationApi.class,
         properties = {
-                "idam.s2s-auth.url=http://localhost:5050"
+            "idam.s2s-auth.url=http://localhost:5050"
         }
 )
 class ServiceAuthorisationConsumerTest {
