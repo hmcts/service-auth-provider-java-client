@@ -153,6 +153,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    runtimeOnly 'org.springframework.boot:spring-boot-http-converter'
+
     implementation 'io.github.openfeign:feign-jackson'
     implementation 'com.eatthepath:java-otp:0.4.0'
     implementation 'commons-codec:commons-codec'
