@@ -84,7 +84,7 @@ tasks.register('contract', Test) {
     group = 'Verification'
     testClassesDirs = sourceSets.contractTest.output.classesDirs
     classpath = sourceSets.contractTest.runtimeClasspath
-    systemProperty 'pact.rootDir', 'pacts'
+    systemProperty 'pact.rootDir', 'build/pacts'
 }
 
 tasks.named('check') {
@@ -99,15 +99,18 @@ tasks.register('runAndPublishConsumerPactTests') {
     finalizedBy tasks.named('pactPublish')
 }
 
-project.ext {
-    pactVersion = getCheckedOutGitCommitHash()
-}
-
 pact {
     publish {
-        pactDirectory = 'pacts'
-        pactBrokerUrl = System.getenv('PACT_BROKER_FULL_URL') ?: 'http://localhost:80'
+        pactDirectory = 'build/pacts'
+
+        pactBrokerUrl = project.findProperty('pactbroker.url')
+                ?: System.getenv('PACT_BROKER_FULL_URL')
+                ?: 'http://localhost:80'
+
         tags = [System.getenv('PACT_BRANCH_NAME') ?: 'Dev']
+
+        consumerVersion = project.findProperty('pact.consumer.version')
+                ?: getCheckedOutGitCommitHash()
     }
 }
 
