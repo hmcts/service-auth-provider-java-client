@@ -2,8 +2,10 @@ package uk.gov.hmcts.reform.authorisation;
 
 import au.com.dius.pact.consumer.dsl.PactDslRootValue;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.junit.MockServerConfig;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
+import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,12 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnableAutoConfiguration
 @ExtendWith(PactConsumerTestExt.class)
-@PactTestFor(providerName = "s2s_auth", port = "5050")
+@PactTestFor(
+        providerName = "s2s_auth",
+        pactVersion = PactSpecVersion.V4
+)
+@MockServerConfig(port = "5050")
 @SpringBootTest(
-    classes = ServiceAuthorisationApi.class,
-    properties = {
-        "idam.s2s-auth.url=http://localhost:5050"
-    }
+        classes = ServiceAuthorisationApi.class,
+        properties = {
+                "idam.s2s-auth.url=http://localhost:5050"
+        }
 )
 class ServiceAuthorisationConsumerTest {
 
@@ -53,31 +59,33 @@ class ServiceAuthorisationConsumerTest {
     }
 
     @Pact(consumer = "s2s_auth_client")
-    V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
-        return builder.given("microservice with valid credentials")
-            .uponReceiving("a request for a token")
-            .path("/lease")
-            .method(HttpMethod.POST.name())
-            .body(buildJsonPayload())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
-            .toPact(V4Pact.class);
+    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
+        return builder
+                .given("microservice with valid credentials")
+                .uponReceiving("a request for a token")
+                .path("/lease")
+                .method(HttpMethod.POST.name())
+                .body(buildJsonPayload())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_TOKEN))
+                .toPact(V4Pact.class);
     }
 
     @Pact(consumer = "s2s_auth_client")
-    V4Pact executeDetails(PactDslWithProvider builder) {
-        return builder.given("microservice with valid token")
-            .uponReceiving("a request to validate details")
-            .path("/details")
-            .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
-            .method(HttpMethod.GET.name())
-            .willRespondWith()
-            .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
-            .status(HttpStatus.OK.value())
-            .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
-            .toPact(V4Pact.class);
+    public V4Pact executeDetails(PactDslWithProvider builder) {
+        return builder
+                .given("microservice with valid token")
+                .uponReceiving("a request to validate details")
+                .path("/details")
+                .headers(HttpHeaders.AUTHORIZATION, AUTHORISATION_TOKEN)
+                .method(HttpMethod.GET.name())
+                .willRespondWith()
+                .headers(Map.of(HttpHeaders.CONTENT_TYPE, "text/plain"))
+                .status(HttpStatus.OK.value())
+                .body(PactDslRootValue.stringType(SOME_MICRO_SERVICE_NAME))
+                .toPact(V4Pact.class);
     }
 
     @Test
