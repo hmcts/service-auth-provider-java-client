@@ -159,7 +159,7 @@ dependencies {
 
     runtimeOnly 'org.springframework.boot:spring-boot-http-converter'
 
-    implementation 'io.github.openfeign:feign-jackson'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.eatthepath:java-otp:0.4.0'
     implementation 'commons-codec:commons-codec'
     implementation 'com.auth0:java-jwt:4.6.1'
@@ -172,6 +172,7 @@ dependencies {
     integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot-standalone:4.2.3'
 
     contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.7.5'
+    contractTestImplementation 'tools.jackson.core:jackson-databind'
 }
 
 dependencyCheck {

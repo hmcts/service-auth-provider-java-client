@@ -8,8 +8,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.PactSpecVersion;
 import au.com.dius.pact.core.model.V4Pact;
 import au.com.dius.pact.core.model.annotations.Pact;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +59,7 @@ class ServiceAuthorisationConsumerTest {
     }
 
     @Pact(consumer = "s2s_auth_client")
-    public V4Pact executeLease(PactDslWithProvider builder) throws JsonProcessingException {
+    public V4Pact executeLease(PactDslWithProvider builder) throws JacksonException {
         return builder
                 .given("microservice with valid credentials")
                 .uponReceiving("a request for a token")
@@ -104,7 +104,7 @@ class ServiceAuthorisationConsumerTest {
         assertEquals(SOME_MICRO_SERVICE_NAME, serviceName);
     }
 
-    private String buildJsonPayload() throws JsonProcessingException {
+    private String buildJsonPayload() throws JacksonException {
         return objectMapper.writeValueAsString(jsonPayload);
     }
 }

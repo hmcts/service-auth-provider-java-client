@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
@@ -59,6 +60,9 @@ class ServiceAuthorisationApiTest {
     private ServiceAuthorisationApi s2sApi;
 
     @Autowired
+    private ServiceAuthorisationHealthApi serviceAuthorisationHealthApi;
+
+    @Autowired
     private ServiceAuthFilter serviceAuthFilter;
 
     private FilterChain filterChain;
@@ -80,6 +84,16 @@ class ServiceAuthorisationApiTest {
                 .willReturn(status(SC_OK).withBody(UNAUTHORISED_SERVICE)));
 
         assertEquals(UNAUTHORISED_SERVICE, validator.getServiceName("token"));
+    }
+
+    @Test
+    void shouldDecodeServiceHealth() {
+        givenThat(get("/health")
+                .willReturn(status(SC_OK)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"status\":\"UP\"}")));
+
+        assertEquals(Status.UP, serviceAuthorisationHealthApi.health().getStatus());
     }
 
     @Test
