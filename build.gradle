@@ -169,7 +169,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot-standalone:4.2.3'
+    integrationTestImplementation 'org.wiremock.integrations:wiremock-spring-boot-standalone:4.4.2'
 
     contractTestImplementation 'au.com.dius.pact.consumer:junit5:4.7.5'
     contractTestImplementation 'tools.jackson.core:jackson-databind'
