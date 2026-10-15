@@ -162,7 +162,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.eatthepath:java-otp:1.0.0'
     implementation 'commons-codec:commons-codec'
-    implementation 'com.auth0:java-jwt:4.6.1'
+    implementation 'com.auth0:java-jwt:4.6.2'
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api'
     testImplementation 'jakarta.servlet:jakarta.servlet-api'
