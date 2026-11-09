@@ -32,4 +32,18 @@ class TotpGeneratorTest {
     void shouldReproduceGoogleAuthenticatorCodes(String secret, String expected) {
         assertEquals(expected, TotpGenerator.generate(secret, 1_700_000_000_000L));
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "59,           119246",
+        "1111111109,   084774",
+        "1111111111,   062674",
+        "1234567890,   819424",
+        "2000000000,   698825",
+        "20000000000,  737706"
+    })
+    void shouldMatchRfc6238Sha256Vectors(long epochSecond, String expected) {
+        String secret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA====";
+        assertEquals(expected, TotpGenerator.generate(secret, epochSecond * 1000L, TotpAlgorithm.HMAC_SHA256));
+    }
 }
