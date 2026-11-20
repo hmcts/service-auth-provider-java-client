@@ -32,6 +32,20 @@ public final class AuthTokenGeneratorFactory {
         );
     }
 
+    /** Creates a cached token generator using an explicitly selected OTP algorithm. */
+    public static AuthTokenGenerator createGenerator(
+            String secret,
+            String microService,
+            ServiceAuthorisationApi serviceAuthorisationApi,
+            TotpAlgorithm algorithm
+    ) {
+        return new BearerTokenGenerator(
+                new AutorefreshingJwtAuthTokenGenerator(
+                        new ServiceAuthTokenGenerator(secret, microService, serviceAuthorisationApi, algorithm)
+                )
+        );
+    }
+
     private AuthTokenGeneratorFactory() {
         // Static factory class
     }

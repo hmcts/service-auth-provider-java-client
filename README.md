@@ -124,3 +124,20 @@ build and publish the release to maven.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Opting a service identity into SHA-256 OTP
+
+After the S2S server supports per-identity `microserviceOtpAlgorithms`, create an explicit
+SHA-256 generator with:
+
+```java
+AuthTokenGeneratorFactory.createGenerator(
+    secret, microservice, serviceAuthorisationApi, TotpAlgorithm.HMAC_SHA256
+);
+```
+
+The existing constructors and `createDefaultGenerator` keep their legacy behavior so publishing
+this library does not break existing services. All callers sharing an identity must agree with
+the server configuration. Coordinate the cutover; the server must not accept both algorithms
+as a permanent fallback. Use a separately provisioned identity if callers cannot migrate together.
+The `/lease` JSON request is unchanged. This change affects OTP generation, not JWT signing.

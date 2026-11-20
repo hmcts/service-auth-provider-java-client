@@ -39,4 +39,20 @@ class ServiceAuthTokenGeneratorTest {
                 && payload.get("oneTimePassword").matches("\\d{6}")
         ));
     }
+
+    @Test
+    void shouldSendSha256OtpWhenExplicitlySelected() {
+        String secret = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA====";
+        long before = System.currentTimeMillis();
+        new ServiceAuthTokenGenerator(secret, "upgraded_service", serviceAuthorisationApi,
+            TotpAlgorithm.HMAC_SHA256).generate();
+        long after = System.currentTimeMillis();
+        verify(serviceAuthorisationApi).serviceToken(argThat(payload ->
+            "upgraded_service".equals(payload.get("microservice"))
+                && (TotpGenerator.generate(secret, before, TotpAlgorithm.HMAC_SHA256)
+                    .equals(payload.get("oneTimePassword"))
+                || TotpGenerator.generate(secret, after, TotpAlgorithm.HMAC_SHA256)
+                    .equals(payload.get("oneTimePassword")))
+        ));
+    }
 }
